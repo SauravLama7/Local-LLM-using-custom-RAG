@@ -15,8 +15,7 @@ def retrieve_docs(query, k=5, rerank_k=3):
         n_results=k
     )
 
-    docs = results["documents"][0]
-
+    docs = results["documents"][0] 
 
     # Rerank documents
     reranked_docs = rerank(
