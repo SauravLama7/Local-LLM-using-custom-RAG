@@ -1,18 +1,19 @@
 from rag.retriever import retrieve_docs
+from rag.prompts import SYSTEM_PROMPTS
 
-SYSTEM_PROMPT = """
-You are a helpful AI assistant for answering based on the provided context.
-- Respond to greetings like "hello" and "hi"
-- Use information given in the context to give answers.
-- If the answer is not in the context atleast try unless it is irrelevant then say "I'dont know"
-- Do NOT guess, assume, or use outside knowledge.
+DEFAULT_SYSTEM_PROMPT = """
+You are a helpful AI assistant for answering based ONLY on the provided context.
+
+Rules:
+- Use ONLY the given context.
+- If the answer is not in the context, say: "I don't know based on the provided documents."
+- Do not guess or use outside knowledge.
 - Be concise, clear, and factual.
-Your goal is to help users understand documents accurately and reliably.
 """
 
-def build_prompt(query, context):
+def build_prompt(query, context, system_prompt):
     return f"""
-{SYSTEM_PROMPT}
+{system_prompt}
 
 Context:
 {context}
@@ -21,9 +22,10 @@ Question:
 {query}
 
 Answer:
-"""
+""".strip()
 
-def get_prompt(query):
+def get_prompt(query, model = "default"):
     docs = retrieve_docs(query)
     context = "\n\n".join(docs)
-    return build_prompt(query,context)
+    system_prompt = SYSTEM_PROMPTS.get(model,DEFAULT_SYSTEM_PROMPT)
+    return build_prompt(query,context,system_prompt)
