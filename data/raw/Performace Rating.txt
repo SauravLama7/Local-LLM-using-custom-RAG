@@ -1,0 +1,12 @@
+4. Performance Ratings (2025 Cycle)
+Employee ID	Rating	Remarks
+NX-1001	4.2/5	Strong backend performance
+NX-1002	4.5/5	Excellent HR management
+NX-1003	4.0/5	Stable DevOps contributions
+NX-1004	4.7/5	Strong product leadership
+NX-1005	3.9/5	Needs improvement in UI consistency
+NX-1006	4.1/5	Accurate financial reporting
+NX-1007	4.6/5	Reliable system uptime support
+NX-1008	4.8/5	High-impact data models
+NX-1009	3.8/5	Needs stronger campaign optimization
+NX-1010	4.0/5	Good QA coverage

@@ -1,0 +1,87 @@
+🧾 Nexora Technologies Pvt. Ltd.
+Employee Records (Internal HR Database – Dummy Data)
+
+Document Version: 1.0
+Classification: Confidential (Simulated Data)
+Last Updated: 17 May 2026
+
+Employee:
+NX-1001
+Full Name: Aarav Sharma
+Department: Engineering
+Designation: Backend Developer
+Joining Date: 2023-06-12
+Work Type: Hybrid
+Status: Active
+
+NX-1002
+Full Name: Sita Karki
+Department: Human Resources
+Designation: HR Manager
+Joining Date: 2022-03-01
+Work Type: On-site
+Status: Active
+
+NX-1003
+Full Name: Rohan Mehta
+Department: Engineering
+Designation: DevOps Engineer
+Joining Date: 2024-01-15
+Work Type: Remote
+Status: Active
+
+NX-1004
+Full Name: Anjali Joshi
+Department: Product
+Designation: Product Manager
+Joining Date: 2021-09-20
+Work Type: Hybrid
+Status: Active
+
+NX-1005
+Full Name: Bikash Gurung
+Department: Engineering
+Designation: Frontend Developer
+Joining Date: 2023-11-05
+Work Type: Remote
+Status: Active
+
+NX-1006
+Full Name: Priya Singh
+Department: Finance
+Designation: Accountant
+Joining Date: 2022-07-18
+Work Type: On-site
+Status: Active
+
+NX-1007
+Full Name: Manish Thapa
+Department: IT Support
+Designation: System Administrator
+Joining Date: 2020-12-10
+Work Type: On-site
+Status: Active
+
+NX-1008
+Full Name: Elena Rai
+Department: Engineering
+Designation: Data Scientist
+Joining Date: 2024-04-08
+Work Type: Hybrid
+Status: Active
+
+NX-1009
+Full Name: Sagar Joshi
+Department: Marketing
+Designation: Digital Marketing Executive
+Joining Date: 2023-02-14
+Work Type: Remote
+Status: Active
+
+NX-1010
+Full Name: Nisha Adhikari
+Department: Engineering
+Designation: QA Engineer
+Joining Date: 2023-08-30
+Work Type: Hybrid
+Status: Active
