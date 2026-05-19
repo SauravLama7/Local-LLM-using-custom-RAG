@@ -25,6 +25,7 @@ with st.sidebar:
         "choose Model",
         MODEL_OPTIONS
     )
+    st.sidebar.success(f"🧠 Active Model:{selected_model}")
 
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
@@ -32,7 +33,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("### About")
-    st.write("Local RAG system using embeddings + vector DB + Ollama")
+    st.write("Local Large Language model using RAG(Retrieval-Augmented-Generation), Chromadb(vectorDB), all-MiniLM-L6-v2(embedding model) and ollama(backend)")
 
 
 # TITLE
@@ -48,6 +49,8 @@ if "messages" not in st.session_state:
 
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
+        if msg["role"] == "assistant":
+            st.caption(f"🧠 {msg.get('model', '')}")
         st.markdown(msg["content"])
 
 
@@ -69,6 +72,7 @@ if user_input:
 
     # Generate response
     with st.chat_message("assistant"):
+        st.caption(f"🧠 Using model: {selected_model}")
         placeholder = st.empty()
         full_response = ""
 
@@ -87,5 +91,7 @@ if user_input:
     # Save assistant message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": full_response
+        "content": full_response,
+        "model": selected_model
+
     })
