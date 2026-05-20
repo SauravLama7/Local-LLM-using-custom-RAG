@@ -1,0 +1,18 @@
+ils import TensorType, is_torch_available, logging
+
+
+if is_torch_available():
+    import torch
+
+
+logger = logging.get_logger(__name__)
+
+
+class Phi4MultimodalFeatureExtractor(SequenceFeatureExtractor):
+    model_input_names = ["audio_input_features", "audio_embed_sizes", "audio_attention_mask"]
+
+    def __init__(
+        self,
+        feature_size: int = 80,
+        sampling_rate: int = 16000,
+    

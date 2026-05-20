@@ -1,6 +1,7 @@
 import os
 import uuid
 from pathlib import Path
+from pypdf import PdfReader
 
 from rag.embedding import embed
 from rag.vectordb import get_collection, reset_collection
@@ -22,13 +23,30 @@ def chunk_text(text,chunk_size = CHUNK_SIZE, overlap = OVERLAP):
 
     return chunks
 
+def read_pdf(file_path):
+    reader = PdfReader(file_path)
+    text = ""
+
+    for page in reader.pages:
+        page_text = page.extract_text()
+        if page_text:
+            text += page_text + "\n"
+
+    return text
+
 # Load Files
 def load_files(path):
     texts = []
 
-    for file in Path(path).glob("*.txt"):
-        with open(file, "r", encoding="utf-8") as f:
-            texts.append((file.name,f.read()))
+    for file in Path(path).glob("*"):
+        print(f"Loading:{file.name}")
+        if file.suffix.lower() == ".txt":
+            with open(file, "r", encoding="utf-8") as f:
+                texts.append((file.name,f.read()))
+
+        elif file.suffix.lower()==".pdf":
+            text = read_pdf(file)
+            texts.append((file.name,text))
 
     return texts
 
