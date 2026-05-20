@@ -1,6 +1,7 @@
 import streamlit as st
 from rag.rag_chain import get_prompt
 from rag.llm import generate
+from memory.chat_store import load_chat, save_chat
 
 
 # PAGE CONFIG
@@ -25,10 +26,19 @@ with st.sidebar:
         "choose Model",
         MODEL_OPTIONS
     )
+
+ # Switch chats when switching model
+    if "current_model" not in st.session_state:
+        st.session_state.current_model = selected_model
+    if st.session_state.current_model != selected_model:
+        st.session_state.current_model = selected_model
+        st.session_state.messages = load_chat(selected_model) 
+
     st.sidebar.success(f"🧠 Active Model:{selected_model}")
 
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
+        save_chat(selected_model,[])
         st.rerun()
 
     st.markdown("---")
@@ -43,7 +53,7 @@ st.caption("Ask questions over your documents using local AI")
 
 # SESSION STATE
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = load_chat(selected_model)
 
 # DISPLAY CHAT HISTORY
 
@@ -67,6 +77,8 @@ if user_input:
         "content": user_input
     })
 
+    save_chat(selected_model, st.session_state.messages)
+
     with st.chat_message("user"):
         st.markdown(user_input)
 
@@ -77,7 +89,7 @@ if user_input:
         full_response = ""
 
         try:
-            prompt = get_prompt(user_input)
+            prompt = get_prompt(query = user_input, model = selected_model, history = st.session_state.messages)
 
             with st.spinner("🔍 Searching documents + thinking..."):
                 for token in generate(prompt, model = selected_model):
@@ -95,3 +107,6 @@ if user_input:
         "model": selected_model
 
     })
+
+    save_chat(selected_model,st.session_state.messages)
+

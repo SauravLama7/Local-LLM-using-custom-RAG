@@ -11,9 +11,21 @@ Rules:
 - Be concise, clear, and factual.
 """
 
-def build_prompt(query, context, system_prompt):
+def build_prompt(query, context, system_prompt, history = None):
+
+    chat_history = ""
+
+    if history:
+        for msg in history:
+            role = msg["role"]
+            content = msg["content"]
+            chat_history += f"{role.upper()}:{content}\n"
+
     return f"""
 {system_prompt}
+
+Chat History:
+{chat_history}
 
 Context:
 {context}
@@ -24,8 +36,8 @@ Question:
 Answer:
 """.strip()
 
-def get_prompt(query, model = "default"):
+def get_prompt(query, model = "default", history = None):
     docs = retrieve_docs(query)
     context = "\n\n".join(docs)
     system_prompt = SYSTEM_PROMPTS.get(model,DEFAULT_SYSTEM_PROMPT)
-    return build_prompt(query,context,system_prompt)
+    return build_prompt(query, context, system_prompt, history)

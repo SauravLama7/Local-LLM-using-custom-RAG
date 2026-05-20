@@ -1,0 +1,29 @@
+[
+  {
+    "role": "user",
+    "content": "how many employees are there?"
+  },
+  {
+    "role": "assistant",
+    "content": "There is only one employee listed in the provided data, which is Aarav Sharma (NX-1001).",
+    "model": "llama3.2:1b"
+  },
+  {
+    "role": "user",
+    "content": "list the employees in this company"
+  },
+  {
+    "role": "assistant",
+    "content": "The list of employees in Nexora Technologies Pvt. Ltd., as provided, includes:\n\n1. Aarav Sharma (NX-1001)\n2. Sita Karki (NX-1002)\n3. Sagar Joshi (NX-1009) - initially listed under NX-1008 but corrected to NX-1009\n4. Nisha Adhikari (NX-1010)",
+    "model": "llama3.2:1b"
+  },
+  {
+    "role": "user",
+    "content": "arent there 10 employee"
+  },
+  {
+    "role": "assistant",
+    "content": "There are 4 employees listed in the provided data. The list includes:\n\n1. Aarav Sharma (NX-1001)\n2. Sita Karki (NX-1002)\n3. Nisha Adhikari (NX-1010)\n4. Ro (NX-1008)",
+    "model": "llama3.2:1b"
+  }
+]

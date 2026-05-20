@@ -1,1 +1,14 @@
-invalid type: string "4. Performance Ratings (2025 Cycle)\nEmployee ID\tRating\tRemarks\nNX-1001\t4.2/5\tStrong backend performance\nNX-1002\t4.5/5\tExcellent HR management\nNX-1003\t4.0/5\tStable DevOps contributions\nNX-1004\t4.7/5\tStrong product leadership\nNX-1005\t3.9/5\tNeeds improvement in UI consistency\nNX-1006\t4.1/5\tAccurate financial reporting\nNX-1007\t4.6/5\tning Date: 2020-12-10\n
+ght, new_width = old_height * scale, old_width * scale
+    new_width = int(new_width + 0.5)
+    new_height = int(new_height + 0.5)
+
+    coords = deepcopy(coords).float()
+
+    if is_bounding_box:
+        coords = coords.reshape(-1, 2, 2)
+
+    coords[..., 0] = coords[..., 0] * (new_width / old_width)
+    coords[..., 1] = coords[..., 1] * (new_height / old_height)
+
+    if is_bounding_box:
+        coo
