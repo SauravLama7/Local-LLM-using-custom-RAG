@@ -5,16 +5,16 @@
   },
   {
     "role": "assistant",
-    "content": "The user has sent an \"hello\" message to the chat.",
+    "content": "The user has asked a simple \"hello\" response. There's no context or previous conversation to provide more information about the user, Anil Gurung, Senior Software Engineer at NX-201. The reply simply acknowledges the greeting without adding any additional details or insights.",
     "model": "llama3.2:1b"
   },
   {
     "role": "user",
-    "content": "what is the name of the company"
+    "content": "how many employees are there?"
   },
   {
     "role": "assistant",
-    "content": "The name of the company mentioned in the chat history is Nexora Technologies Pvt. Ltd.",
+    "content": "There are 8 employees listed, as they can be found on the page 1 of the employee records (HR Database Export) provided.",
     "model": "llama3.2:1b"
   }
 ]

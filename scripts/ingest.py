@@ -1,38 +1,30 @@
 import os
 import uuid
 from pathlib import Path
-from pypdf import PdfReader
+import fitz
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from rag.embedding import embed
-from rag.vectordb import get_collection, reset_collection
+from rag.vectordb import get_collection
 
 # Config
 DATA_PATH = "data/raw"
 CHUNK_SIZE = 500
 OVERLAP = 100
 
-# Text Chunking
-def chunk_text(text,chunk_size = CHUNK_SIZE, overlap = OVERLAP):
-    chunks = []
-    start = 0
-
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
-
-    return chunks
-
+# PDF Reader
 def read_pdf(file_path):
-    reader = PdfReader(file_path)
+    doc = fitz.open(file_path)
     text = ""
 
-    for page in reader.pages:
-        page_text = page.extract_text()
+    for page in doc:
+        page_text = page.get_text()
         if page_text:
             text += page_text + "\n"
 
     return text
+
 
 # Load Files
 def load_files(path):
@@ -44,11 +36,22 @@ def load_files(path):
             with open(file, "r", encoding="utf-8") as f:
                 texts.append((file.name,f.read()))
 
-        elif file.suffix.lower()==".pdf":
+        elif file.suffix.lower() == ".pdf":
             text = read_pdf(file)
             texts.append((file.name,text))
 
     return texts
+
+
+# Chunking(Langchain)
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size = CHUNK_SIZE,
+    chunk_overlap = OVERLAP
+)
+
+def chunk_text(text):
+    return splitter.split_text(text)
+
 
 # Ingest Pipeline
 def ingest():
@@ -61,19 +64,30 @@ def ingest():
     all_metadata = []
 
     for filename, text in files:
+        if not text.strip():
+            print(f"Skipping empty files:{filename}")
+            continue
         chunks = chunk_text(text)
         embeddings = embed(chunks)
 
-        for i, chunk in enumerate(chunks):
-            doc_id = f"{filename}_{i}"
 
-            all_docs.append(chunk)
-            all_embeddings.append(embeddings[i])
-            all_ids.append(doc_id)
-            all_metadata.append({
-                "source": filename,
-                "chunk_id": i
-            })
+    # Safety check
+    if len(chunks) != len(embeddings):
+        raise ValueError(
+            f"Embedding mismatch in {filename}:"
+            f"{len(chunks)} chunks vs {len(embeddings)} embeddings"
+        )
+
+    for i, chunk in enumerate(chunks):
+        doc_id = f"{filename}_{i}"
+
+        all_docs.append(chunk)
+        all_embeddings.append(embeddings[i])
+        all_ids.append(doc_id)
+        all_metadata.append({
+            "source": filename,
+            "chunk_id": i
+        })
 # Store in chromaDB    
     collection.upsert(
         documents = all_docs,

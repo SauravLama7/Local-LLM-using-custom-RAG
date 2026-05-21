@@ -12,4 +12,4 @@ def embed(texts):
     if isinstance(texts, str):
         texts = [texts]
     model = get_model()
-    return model.encode(texts, convert_to_numpy = True)
+    return model.encode(texts, convert_to_numpy = True, normalize_embeddings=True)
