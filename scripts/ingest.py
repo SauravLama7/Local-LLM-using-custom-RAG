@@ -67,6 +67,7 @@ def ingest():
         if not text.strip():
             print(f"Skipping empty files:{filename}")
             continue
+        
         chunks = chunk_text(text)
         embeddings = embed(chunks)
 
