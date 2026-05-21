@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "hello"
+  },
+  {
+    "role": "assistant",
+    "content": "The user has sent an \"hello\" message to the chat.",
+    "model": "llama3.2:1b"
+  },
+  {
+    "role": "user",
+    "content": "what is the name of the company"
+  },
+  {
+    "role": "assistant",
+    "content": "The name of the company mentioned in the chat history is Nexora Technologies Pvt. Ltd.",
+    "model": "llama3.2:1b"
+  }
+]

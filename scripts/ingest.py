@@ -52,7 +52,6 @@ def load_files(path):
 
 # Ingest Pipeline
 def ingest():
-    reset_collection()
     collection = get_collection()
     files = load_files(DATA_PATH)
 
@@ -66,7 +65,7 @@ def ingest():
         embeddings = embed(chunks)
 
         for i, chunk in enumerate(chunks):
-            doc_id = str(uuid.uuid4())
+            doc_id = f"{filename}_{i}"
 
             all_docs.append(chunk)
             all_embeddings.append(embeddings[i])
@@ -76,7 +75,7 @@ def ingest():
                 "chunk_id": i
             })
 # Store in chromaDB    
-    collection.add(
+    collection.upsert(
         documents = all_docs,
         embeddings = all_embeddings,
         ids = all_ids,
