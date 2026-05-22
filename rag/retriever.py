@@ -3,7 +3,7 @@ from rag.vectordb import get_collection
 from rag.reranker import rerank
 
 
-def retrieve_docs(query, k=7, rerank_k=4):
+def retrieve_docs(query, k=7, rerank_k=3):
     collection = get_collection()
 
     # Embed query

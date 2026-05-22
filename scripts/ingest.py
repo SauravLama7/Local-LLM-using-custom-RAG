@@ -1,5 +1,3 @@
-import os
-import uuid
 from pathlib import Path
 import fitz
 
@@ -72,23 +70,23 @@ def ingest():
         embeddings = embed(chunks)
 
 
-    # Safety check
-    if len(chunks) != len(embeddings):
-        raise ValueError(
-            f"Embedding mismatch in {filename}:"
-            f"{len(chunks)} chunks vs {len(embeddings)} embeddings"
-        )
+        # Safety check
+        if len(chunks) != len(embeddings):
+            raise ValueError(
+                f"Embedding mismatch in {filename}:"
+                f"{len(chunks)} chunks vs {len(embeddings)} embeddings"
+            )
 
-    for i, chunk in enumerate(chunks):
-        doc_id = f"{filename}_{i}"
+        for i, chunk in enumerate(chunks):
+            doc_id = f"{filename}_{i}"
 
-        all_docs.append(chunk)
-        all_embeddings.append(embeddings[i])
-        all_ids.append(doc_id)
-        all_metadata.append({
-            "source": filename,
-            "chunk_id": i
-        })
+            all_docs.append(chunk)
+            all_embeddings.append(embeddings[i])
+            all_ids.append(doc_id)
+            all_metadata.append({
+                "source": filename,
+                "chunk_id": i
+            })
 # Store in chromaDB    
     collection.upsert(
         documents = all_docs,
