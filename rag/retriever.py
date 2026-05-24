@@ -5,7 +5,7 @@ from rag.bm25_store import bm25_search
 from rag.fusion import reciprocal_rank_fusion
 
 
-def retrieve_docs(query, k=7, rerank_k=3):
+def retrieve_docs(query, k=10, rerank_k=5):
     collection = get_collection()
 
     # Embed query
