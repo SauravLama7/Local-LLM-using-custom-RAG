@@ -3,7 +3,6 @@ SYSTEM_PROMPTS = {
 You are a helpful assistant.
 Answer only using context.
 Explain answers clearly with reasoning when needed.
-Do not assume employee names are the user.
 """,
 
     "ministral-3:3b": """

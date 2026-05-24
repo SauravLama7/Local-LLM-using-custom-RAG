@@ -1,6 +1,8 @@
 from rag.embedding import embed
 from rag.vectordb import get_collection
 from rag.reranker import rerank
+from rag.bm25_store import bm25_search
+from rag.fusion import reciprocal_rank_fusion
 
 
 def retrieve_docs(query, k=7, rerank_k=3):
@@ -15,13 +17,19 @@ def retrieve_docs(query, k=7, rerank_k=3):
         n_results=k
     )
 
-    docs = results["documents"][0] 
+    vector_docs = results["documents"][0]
+
+    # BM25 Search
+    bm25_docs = bm25_search(query , top_k = k)
+
+    # Fuse result (RRF)
+    fused_docs = reciprocal_rank_fusion(vector_docs, bm25_docs) 
 
     # Rerank documents
     reranked_docs = rerank(
-        query=query,
-        documents=docs,
-        top_k=rerank_k
+        query = query,
+        documents = fused_docs,
+        top_k = rerank_k
     )
 
     return reranked_docs

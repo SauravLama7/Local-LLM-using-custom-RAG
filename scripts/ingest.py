@@ -3,6 +3,7 @@ import fitz
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+from rag.bm25_store import save_bm25
 from rag.embedding import embed
 from rag.vectordb import get_collection
 
@@ -94,6 +95,8 @@ def ingest():
         ids = all_ids,
         metadatas = all_metadata
     )
+
+    save_bm25(all_docs)
 
     print(f"✅ Ingested {len(all_docs)} chunks from {len(files)} files")
 
