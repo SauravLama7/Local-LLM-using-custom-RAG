@@ -13,6 +13,18 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+    <style>
+        section.main > div {
+        padding-bottom: 10px;
+        }
+        .stChatFloatingInputContainer{
+        position: fixed;
+         bottom: 0;
+        }
+    <style>
+""", unsafe_allow_html = True)
+
 # SIDEBAR
 with st.sidebar:
     st.title("⚙️ Settings")
