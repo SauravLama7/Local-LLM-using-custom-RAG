@@ -6,6 +6,7 @@ You are a helpful AI assistant for answering based ONLY on the provided context.
 
 Rules:
 - Use ONLY the given context.
+- After each fact or sentence cite the source using [1], [2] etc matching the context numbers.
 - If the answer is not in the context, say: "I don't know based on the provided documents."
 - Do not guess or use outside knowledge.
 - Be concise, clear, and factual.
@@ -37,7 +38,25 @@ Answer:
 """.strip()
 
 def get_prompt(query, model = "default", history = None):
-    docs = retrieve_docs(query)
-    context = "\n\n".join(docs)
+    results = retrieve_docs(query)
+
+    # Build numbered context with source labels
+    context_parts = []
+    sources = []
+
+    for i,r in enumerate(results, start = 1):
+        text = r["text"]
+        source = r["metadata"].get("source", "unknown")
+        chunk_id = r["metadata"].get("chunk_id", 0)
+
+        context_parts.append(f"[{i}] {text}")
+
+        # Duplicate sources
+        if source not in sources:
+            sources.append(source)
+
+    context = "\n\n".join(context_parts)
     system_prompt = SYSTEM_PROMPTS.get(model,DEFAULT_SYSTEM_PROMPT)
-    return build_prompt(query, context, system_prompt, history)
+    prompt = build_prompt(query, context, system_prompt, history)
+
+    return prompt, sources

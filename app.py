@@ -22,7 +22,7 @@ st.markdown("""
         position: fixed;
          bottom: 0;
         }
-    <style>
+    </style>
 """, unsafe_allow_html = True)
 
 # SIDEBAR
@@ -148,6 +148,11 @@ def render_message(msg):
 
         st.markdown(msg["content"])
 
+        # Show citations if present
+        if msg.get("sources"):
+            citation_md = " ".join([f"`📄 {src}`" for src in msg["sources"]])
+            st.markdown(f"**Sources:** {citation_md}")
+
 
 # DISPLAY CHAT HISTORY
 for msg in st.session_state.messages:
@@ -176,7 +181,7 @@ if user_input:
         full_response = ""
 
         try:
-            prompt = get_prompt(
+            prompt, sources = get_prompt(
                 query=user_input,
                 model=selected_model,
                 history=st.session_state.messages
@@ -190,6 +195,13 @@ if user_input:
                 ):
                     full_response += token
                     placeholder.markdown(full_response)
+            
+            # Render Citations
+            if sources:
+                citation_md = " ".join([
+                    f"`📄 {src}`" for src in sources                   
+                ])
+                st.markdown(f"**Sources:** {citation_md}")
 
         except Exception as e:
             full_response = f"❌ Error: {str(e)}"
@@ -199,6 +211,7 @@ if user_input:
     st.session_state.messages.append({
         "role": "assistant",
         "content": full_response,
-        "model": selected_model
+        "model": selected_model,
+        "sources": sources if 'sources' in locals() else []
     })
     save_chat(selected_model, st.session_state.messages)
