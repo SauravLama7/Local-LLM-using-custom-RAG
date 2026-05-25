@@ -1,5 +1,5 @@
 SYSTEM_PROMPTS = {
-    "llama3.2:1b": """
+    "qwen2.5:3b": """
 You are a helpful assistant.
 Answer only using context.
 Explain answers clearly with reasoning when needed.

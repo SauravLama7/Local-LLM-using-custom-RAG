@@ -31,6 +31,7 @@ def load_files(path):
 
     for file in Path(path).glob("*"):
         print(f"Loading:{file.name}")
+        
         if file.suffix.lower() == ".txt":
             with open(file, "r", encoding="utf-8") as f:
                 texts.append((file.name,f.read()))

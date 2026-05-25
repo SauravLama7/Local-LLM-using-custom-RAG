@@ -17,7 +17,7 @@ with st.sidebar:
     st.markdown("### Model Info")
     st.info("Please select the model you want to use.")
 
-    MODEL_OPTIONS = ["llama3.2:1b", "ministral-3:3b"]
+    MODEL_OPTIONS = ["qwen2.5:3b", "ministral-3:3b"]
     selected_model = st.sidebar.selectbox("Choose Model", MODEL_OPTIONS)
 
     # Switch chats when switching model

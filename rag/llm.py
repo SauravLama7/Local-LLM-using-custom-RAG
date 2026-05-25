@@ -14,7 +14,7 @@ def encode_image(image_bytes: bytes) -> str:
     """Convert raw image bytes to base64 string for Ollama."""
     return base64.b64encode(image_bytes).decode("utf-8")
 
-def generate(prompt, model="llama3.2:1b", image_bytes: bytes | None = None):
+def generate(prompt, model="qwen2.5:3b", image_bytes: bytes | None = None):
     payload = {
         "model": model,
         "prompt": prompt,

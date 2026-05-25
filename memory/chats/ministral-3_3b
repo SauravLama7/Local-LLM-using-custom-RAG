@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "who is junior developer and what are they currently working on"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context, the **Junior Developer** at Nexora Technologies Pvt. Ltd. is:\n\n### **Kevin Tamang (NX-205)**\n- **Current Role & Responsibilities**:\n  - **Feature Development**: Building new functionalities for the company’s projects.\n  - **QA Support**: Assisting in quality assurance tasks, likely reviewing code, testing features, and ensuring reliability.\n\n- **Reasoning**:\n  The context explicitly lists **Kevin Tamang** as a *Junior Developer* with these current tasks. No other junior roles are mentioned, so this is the only relevant entry.\n\nWould you like further details on his contributions or any specific projects?",
+    "model": "ministral-3:3b"
+  }
+]
