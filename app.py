@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import streamlit as st
 import base64
 from rag.rag_chain import get_prompt
@@ -41,6 +43,64 @@ with st.sidebar:
         if uploaded_file:
             uploaded_image = uploaded_file.read()
             st.image(uploaded_image, caption="Image ready to send", use_container_width=True)
+
+    # Add Document Feature
+    st.markdown("### 📄 Add Documents")
+    doc_files = st.file_uploader(
+        """Upload documents to knowledge base""",
+        type = ["pdf","txt"],
+        accept_multiple_files = True,
+        key = "doc_uploader"
+    )
+
+    if doc_files:
+        if st.button("⚡ Ingest Documents"):
+            import shutil
+            from scripts.ingest import ingest
+
+            os.makedirs("data/raw", exist_ok = True)
+            saved = []
+            skipped = []
+
+            for doc in doc_files:
+                dest = os.path.join("data/raw", doc.name)
+
+                # Don't overwrite if identical file already exists 
+                if os.path.exists(dest):
+                    skipped.append(doc.name)
+                    continue
+                
+                with open(dest, "wb") as f:
+                    shutil.copyfileobj(doc, f)
+                saved.append(doc.name)
+            
+            if saved:
+                with st.spinner(f"⚙️ Ingesting {len(saved)} file(s)..."):
+                    try:
+                        ingest()
+                        st.success(f"✅ Ingested: {', '.join(saved)}")
+                    except Exception as e:
+                        st.error(f"❌ Ingest failed: {str(e)}")
+            
+            if skipped:
+                st.info(f"⏭️ Already exists: {', '.join(skipped)}")
+        
+    st.markdown("### 🗂️ Knowledge Base")
+    raw_path = Path("data/raw")
+    if raw_path.exists():
+        files = list(raw_path.glob("*"))
+        if files:
+            for f in files:
+                col1, col2 = st.columns([3,1])
+                col1.caption(f"📄 {f.name}")
+                if col2.button("🗑️", key=f"del_{f.name}"):
+                    f.unlink()  # delete file
+                    st.toast(f"Deleted {f.name}")
+                    st.rerun()
+        
+        else:
+            st.caption("No documents yet")
+                
 
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
