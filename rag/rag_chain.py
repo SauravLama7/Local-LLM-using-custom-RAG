@@ -43,6 +43,7 @@ def get_prompt(query, model = "default", history = None):
     # Build numbered context with source labels
     context_parts = []
     sources = []
+    context_chunks = []
 
     for i,r in enumerate(results, start = 1):
         text = r["text"]
@@ -50,6 +51,7 @@ def get_prompt(query, model = "default", history = None):
         chunk_id = r["metadata"].get("chunk_id", 0)
 
         context_parts.append(f"[{i}] {text}")
+        context_chunks.append(text)
 
         # Duplicate sources
         if source not in sources:
@@ -59,4 +61,4 @@ def get_prompt(query, model = "default", history = None):
     system_prompt = SYSTEM_PROMPTS.get(model,DEFAULT_SYSTEM_PROMPT)
     prompt = build_prompt(query, context, system_prompt, history)
 
-    return prompt, sources
+    return prompt, sources, context_chunks

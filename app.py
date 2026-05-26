@@ -5,6 +5,7 @@ import base64
 from rag.rag_chain import get_prompt
 from rag.llm import generate, VISION_MODELS
 from memory.chat_store import load_chat, save_chat
+from rag.hallucination_guard import check_hallucination
 
 # PAGE CONFIG
 st.set_page_config(
@@ -177,6 +178,13 @@ def render_message(msg):
 
         st.markdown(msg["content"])
 
+        # Hallucination indicator
+        if "grounded" in msg:
+            if msg["grounded"]:
+                st.caption(f"✅ Grounded ({msg['confidence']})")
+            else:
+                st.warning(f"⚠️ Low confidence ({msg['confidence']}) — answer may not be grounded in your documents.")
+
         # Show citations if present
         if msg.get("sources"):
             citation_md = " ".join([f"`📄 {src}`" for src in msg["sources"]])
@@ -209,9 +217,10 @@ if user_input:
         placeholder = st.empty()
         full_response = ""
         sources = []
+        result = {"grounded": False, "score": 0.0}
 
         try:
-            prompt, sources = get_prompt(
+            prompt, sources, context_chunks = get_prompt(
                 query=user_input,
                 model=selected_model,
                 history=st.session_state.messages
@@ -225,6 +234,14 @@ if user_input:
                 ):
                     full_response += token
                     placeholder.markdown(full_response)
+
+            # Hallucination check
+            result = check_hallucination(full_response, context_chunks)
+            if not result["grounded"]:
+                st.warning(f"⚠️ Low confidence ({result['score']}) — answer may not be grounded in your documents.")
+            else:
+                st.caption(f"✅ Grounded ({result['score']})")
+
             
             # Render Citations
             if sources:
@@ -242,6 +259,8 @@ if user_input:
         "role": "assistant",
         "content": full_response,
         "model": selected_model,
-        "sources": sources if 'sources' in locals() else []
+        "sources": sources,
+        "grounded": result["grounded"],
+        "confidence": result["score"]
     })
     save_chat(selected_model, st.session_state.messages)
