@@ -135,6 +135,19 @@ st.caption("Ask questions over your documents using local AI")
 if "messages" not in st.session_state:
     st.session_state.messages = load_chat(selected_model)
 
+# Pre-warm model
+if "model_warmed" not in st.session_state:
+    try:
+        import requests
+        requests.post(
+            "http://localhost:11434/api/generate",
+            json={"model": selected_model, "prompt": " ", "keep_alive": "30m"},
+            timeout=30
+        )
+    except:
+        pass
+    st.session_state.model_warmed = True
+
 
 # Helper: render a single message bubble 
 def render_message(msg):
@@ -180,6 +193,7 @@ if user_input:
         st.caption(f"🧠 Using model: {selected_model}")
         placeholder = st.empty()
         full_response = ""
+        sources = []
 
         try:
             prompt, sources = get_prompt(

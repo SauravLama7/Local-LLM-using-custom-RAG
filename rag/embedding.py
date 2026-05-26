@@ -1,7 +1,9 @@
 from sentence_transformers import SentenceTransformer
+import streamlit as st
 
 _model = None
 
+@st.cache_resource
 def get_model():
     global _model
     if _model is None:

@@ -19,6 +19,11 @@ def generate(prompt, model="qwen2.5:3b", image_bytes: bytes | None = None):
         "model": model,
         "prompt": prompt,
         "stream": True,
+        "keep_alive": "30m",
+        "options": {
+            "num_ctx": 2048,
+            "num_gpu": 99,
+        }
     }
 
     # Attach image only if model supports vision
