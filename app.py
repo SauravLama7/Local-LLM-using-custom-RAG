@@ -136,7 +136,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = load_chat(selected_model)
 
 # Pre-warm model
-if "model_warmed" not in st.session_state:
+if "model_warmed" not in st.session_state or st.session_state.current_model != st.session_state.get("warmed_model"):
     try:
         import requests
         requests.post(
@@ -147,6 +147,7 @@ if "model_warmed" not in st.session_state:
     except:
         pass
     st.session_state.model_warmed = True
+    st.session_state.warmed_model = selected_model
 
 
 # Helper: render a single message bubble 
