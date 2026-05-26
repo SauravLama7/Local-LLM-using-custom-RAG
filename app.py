@@ -106,7 +106,21 @@ with st.sidebar:
                 col1, col2 = st.columns([3,1])
                 col1.caption(f"📄 {f.name}")
                 if col2.button("🗑️", key=f"del_{f.name}"):
-                    f.unlink()  # delete file
+                    #Delete from disk 
+                    f.unlink()
+                    # Delete from chromaDB
+                    from rag.vectordb import delete_by_source
+                    delete_by_source(f.name)
+                    # Rebuild BM25
+                    from rag.bm25_store import rebuild_bm25_without
+                    rebuild_bm25_without(f.name)
+                    # Remove from hash store so re-adding works
+                    from rag.hash_store import load_hashes, save_hashes
+                    hashes = load_hashes()
+                    # Remove by filepath
+                    updated = {k: v for k, v in hashes.items() if f.name not in k}
+                    save_hashes(updated)
+                
                     st.toast(f"Deleted {f.name}")
                     st.rerun()
         

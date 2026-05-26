@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "who is priya joshi?"
+  },
+  {
+    "role": "assistant",
+    "content": "Priya Joshi is the **HR Manager** at **Nexora Technologies Pvt. Ltd.** based on the provided employee records.\n\n### **Current Responsibilities (as per the HR & Finance section and employee records):**\n1. **HR Analytics System** – She is currently overseeing the implementation of an HR analytics system to improve data-driven decision-making in human resources.\n2. **Onboarding Automation** – She is working on automating the onboarding process for new employees to streamline recruitment and integration.\n3. **Attendance System** – She previously completed the digitization of the attendance system for the company.\n\n### **Source References:**\n- **HR & Finance Department Listing** [1]\n- **Employee Records (HR Database Export)** [2]\n\nWould you like additional details about her role or responsibilities?",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_Corporate_Report.pdf",
+      "Nexora_HR_Employee_Table.pdf"
+    ]
+  }
+]

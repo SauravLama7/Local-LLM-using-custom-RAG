@@ -22,11 +22,20 @@ def get_collection():
 
     return _collection
 
-def reset_collection():
-    client = get_client()
+def delete_by_source(filename: str):
+    """Delete all chunks from a specific source file."""
+    collection = get_collection()
 
-    try:
-        client.delete_collection("docs")
-    except:
-        pass
-    
+    # Find all chunks from this source
+    results = collection.get(
+        where = {"source": filename},
+        include = ["documents"]
+    )
+
+    ids = results["ids"]
+
+    if ids:
+        collection.delete(ids = ids)
+        print(f"🗑️ Deleted {len(ids)} chunks from {filename}")
+    else: 
+        print(f"⚠️ No chunks found for {filename}")

@@ -38,3 +38,25 @@ def bm25_search(query: str, top_k: int = 7) -> list[str]:
     scores = index.get_scores(tokens)
     ranked_indices = sorted(range(len(scores)), key = lambda i: scores[i], reverse = True)
     return [docs[i] for i in ranked_indices[:top_k]]
+
+# Rebuild BM25 after file deletion
+def rebuild_bm25_without(filename: str):
+    """Rebuild BM25 index excluding chunks from deleted files."""
+    try:
+        load_bm25()
+    except FileNotFoundError:
+        return  # Nothing to rebuild
+    
+    from rag.vectordb import get_collection
+    collection = get_collection()
+    remaining = collection.get(include = ["documents"])
+    remaining_docs = remaining["documents"]
+
+    if remaining_docs:
+        save_bm25(remaining_docs)
+        print(f"✅ BM25 rebuilt with {len(remaining_docs)} chunks")
+    else:
+        if os.path.exists(BM25_PATH):
+            os.remove(BM25_PATH)
+        print("⚠️ No documents left in knowledge base")
+
