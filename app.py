@@ -116,6 +116,7 @@ with st.sidebar:
 
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
+        st.session_state.pop("sources", None)
         save_chat(selected_model, [])
         st.rerun()
 
