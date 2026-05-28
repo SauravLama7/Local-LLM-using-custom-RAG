@@ -30,7 +30,7 @@ st.markdown("""
 with st.sidebar:
     st.title("⚙️ Settings")
     st.markdown("### Model Info")
-    st.info("Please select the model you want to use.")
+    st.info("qwen2.5:3b and ministral-3:3b are the two models available. ministral-3:3b also supports vision")
 
     MODEL_OPTIONS = ["qwen2.5:3b", "ministral-3:3b"]
     selected_model = st.sidebar.selectbox("Choose Model", MODEL_OPTIONS)
@@ -58,7 +58,7 @@ with st.sidebar:
             st.image(uploaded_image, caption="Image ready to send", use_container_width=True)
 
     # Add Document Feature
-    st.markdown("### 📄 Add Documents")
+    st.markdown("### 📄 Add New Documents")
     doc_files = st.file_uploader(
         """Upload documents to knowledge base""",
         type = ["pdf","txt"],

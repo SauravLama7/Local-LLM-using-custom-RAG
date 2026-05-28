@@ -1,17 +1,1 @@
-[
-  {
-    "role": "user",
-    "content": "who is currently working as QA"
-  },
-  {
-    "role": "assistant",
-    "content": "Bipin KC and Sunita Bhandari are currently working as Quality Assurance (QA) professionals. Bipin KC serves as the QA Lead, currently focusing on automation framework and cloud testing, while Sunita Bhandari is a QA Engineer who is currently engaged in regression testing and API automation.\n\n[1], [2]",
-    "model": "qwen2.5:3b",
-    "sources": [
-      "Nexora_Corporate_Report.pdf",
-      "Nexora_HR_Employee_Table.pdf"
-    ],
-    "grounded": true,
-    "confidence": 0.74
-  }
-]
+[]
