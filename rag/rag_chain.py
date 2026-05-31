@@ -37,8 +37,8 @@ Question:
 Answer:
 """.strip()
 
-def get_prompt(query, model = "default", history = None):
-    results = retrieve_docs(query)
+def get_prompt(query, model = "default", history = None, filter_source = None):
+    results = retrieve_docs(query, filter_source = filter_source)
 
     # Build numbered context with source labels
     context_parts = []

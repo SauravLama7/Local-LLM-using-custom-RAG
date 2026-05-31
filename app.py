@@ -127,6 +127,15 @@ with st.sidebar:
         
         else:
             st.caption("No documents yet")
+    
+    st.markdown("🔎 Filter Source")
+    raw_path = Path("data/raw")
+    available_files = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
+    filter_source = st.selectbox(
+        "Search within document",
+        ["All Documents"] + available_files
+    )
+    filter_source = None if filter_source == "All Documents" else filter_source
                 
 
     if st.button("🧹 Clear Chat"):
@@ -223,7 +232,8 @@ if user_input:
             prompt, sources, context_chunks = get_prompt(
                 query=user_input,
                 model=selected_model,
-                history=st.session_state.messages
+                history=st.session_state.messages,
+                filter_source = filter_source
             )
 
             with st.spinner("🔍 Searching documents + thinking..."):

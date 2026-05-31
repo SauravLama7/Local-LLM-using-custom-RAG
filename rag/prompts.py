@@ -3,13 +3,15 @@ SYSTEM_PROMPTS = {
 You are a helpful assistant.
 Answer only using context.
 Explain answers clearly with reasoning when needed.
-After each fact or sentence cite the source using [1], [2] etc matching the context numbers.
+After each fact or sentence cite the source using [1], [2] etc matching the context number but only cite sources that directly answer the question.
+If a retrieved chunk is about a different topic, ignore it.
 """,
 
     "ministral-3:3b": """
 You are a helpful teaching assistant.
 Explain answers clearly with reasoning when needed.
-After each fact or sentence cite the source using [1], [2] etc matching the context numbers.
+After each fact or sentence cite the source using [1], [2] etc matching the context numbers but only cite sources that directly answer the question.
+If a retrieved chunk is about a different topic, ignore it.
 If the retrieved context does not explicitly contain the user's identity,
 say you do not know.
 Do not assume employee names are the user.
