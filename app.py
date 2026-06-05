@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import streamlit as st
 import base64
+from rag.agent_runner import run_agent
 from rag.rag_chain import get_prompt
 from rag.llm import generate, VISION_MODELS
 from memory.chat_store import load_chat, save_chat
@@ -226,31 +227,36 @@ if user_input:
         placeholder = st.empty()
         full_response = ""
         sources = []
+        context_chunks = []
+        tool_used = "rag_search"
         result = {"grounded": False, "score": 0.0}
 
         try:
-            prompt, sources, context_chunks = get_prompt(
-                query=user_input,
-                model=selected_model,
-                history=st.session_state.messages,
-                filter_source = filter_source
-            )
-
-            with st.spinner("🔍 Searching documents + thinking..."):
-                for token in generate(
-                    prompt,
-                    model=selected_model,
-                    image_bytes=uploaded_image   
-                ):
-                    full_response += token
-                    placeholder.markdown(full_response)
+            with st.spinner("🤖 Agent thinking..."):
+                response_gen, sources, context_chunks, tool_used = run_agent(
+                    query = user_input,
+                    model = selected_model,
+                    history = st.session_state.messages,
+                    filter_source = filter_source
+                )
+            
+            tool_labels = {
+                "rag_search": "🔍 Searched documents",
+                "direct_answer": "💡 Answered directly",
+                "clarify": "❓ Asking clarification"
+            }
+            st.caption(tool_labels.get(tool_used,""))
+            for token in response_gen:
+                full_response += token
+                placeholder.markdown(full_response)
 
             # Hallucination check
-            result = check_hallucination(full_response, context_chunks)
-            if not result["grounded"]:
-                st.warning(f"⚠️ Low confidence ({result['score']}) — answer may not be grounded in your documents.")
-            else:
-                st.caption(f"✅ Grounded ({result['score']})")
+            if tool_used == "rag_search" and context_chunks:
+                result = check_hallucination(full_response, context_chunks)
+                if not result["grounded"]:
+                    st.warning(f"⚠️ Low confidence ({result['score']}) — answer may not be grounded in your documents.")
+                else:
+                    st.caption(f"✅ Grounded ({result['score']})")
 
             
             # Render Citations
@@ -271,6 +277,7 @@ if user_input:
         "model": selected_model,
         "sources": sources,
         "grounded": result["grounded"],
-        "confidence": result["score"]
+        "confidence": result["score"],
+        "tool_used":tool_used
     })
     save_chat(selected_model, st.session_state.messages)
