@@ -3,8 +3,7 @@ from pathlib import Path
 import streamlit as st
 import base64
 from rag.agent_runner import run_agent
-from rag.rag_chain import get_prompt
-from rag.llm import generate, VISION_MODELS
+from rag.llm import VISION_MODELS
 from memory.chat_store import load_chat, save_chat
 from rag.hallucination_guard import check_hallucination
 
@@ -25,7 +24,7 @@ st.markdown("""
          bottom: 0;
         }
     </style>
-""", unsafe_allow_html = True)
+""", unsafe_allow_html=True)
 
 # SIDEBAR
 with st.sidebar:
@@ -45,7 +44,7 @@ with st.sidebar:
 
     st.sidebar.success(f"🧠 Active Model: {selected_model}")
 
-    # Image uploader (vision models only) 
+    # Image uploader (vision models only)
     uploaded_image = None
     if selected_model in VISION_MODELS:
         st.markdown("### 🖼️ Image Input")
@@ -62,9 +61,9 @@ with st.sidebar:
     st.markdown("### 📄 Add New Documents")
     doc_files = st.file_uploader(
         """Upload documents to knowledge base""",
-        type = ["pdf","txt"],
-        accept_multiple_files = True,
-        key = "doc_uploader"
+        type=["pdf", "txt"],
+        accept_multiple_files=True,
+        key="doc_uploader"
     )
 
     if doc_files:
@@ -72,22 +71,22 @@ with st.sidebar:
             import shutil
             from scripts.ingest import ingest
 
-            os.makedirs("data/raw", exist_ok = True)
+            os.makedirs("data/raw", exist_ok=True)
             saved = []
             skipped = []
 
             for doc in doc_files:
                 dest = os.path.join("data/raw", doc.name)
 
-                # Don't overwrite if identical file already exists 
+                # Don't overwrite if identical file already exists
                 if os.path.exists(dest):
                     skipped.append(doc.name)
                     continue
-                
+
                 with open(dest, "wb") as f:
                     shutil.copyfileobj(doc, f)
                 saved.append(doc.name)
-            
+
             if saved:
                 with st.spinner(f"⚙️ Ingesting {len(saved)} file(s)..."):
                     try:
@@ -95,20 +94,20 @@ with st.sidebar:
                         st.success(f"✅ Ingested: {', '.join(saved)}")
                     except Exception as e:
                         st.error(f"❌ Ingest failed: {str(e)}")
-            
+
             if skipped:
                 st.info(f"⏭️ Already exists: {', '.join(skipped)}")
-        
+
     st.markdown("### 🗂️ Knowledge Base")
     raw_path = Path("data/raw")
     if raw_path.exists():
         files = list(raw_path.glob("*"))
         if files:
             for f in files:
-                col1, col2 = st.columns([3,1])
+                col1, col2 = st.columns([3, 1])
                 col1.caption(f"📄 {f.name}")
                 if col2.button("🗑️", key=f"del_{f.name}"):
-                    #Delete from disk 
+                    # Delete from disk
                     f.unlink()
                     # Delete from chromaDB
                     from rag.vectordb import delete_by_source
@@ -122,22 +121,20 @@ with st.sidebar:
                     # Remove by filepath
                     updated = {k: v for k, v in hashes.items() if f.name not in k}
                     save_hashes(updated)
-                
+
                     st.toast(f"Deleted {f.name}")
                     st.rerun()
-        
         else:
             st.caption("No documents yet")
-    
+
     st.markdown("🔎 Filter Source")
     raw_path = Path("data/raw")
     available_files = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
-    filter_source = st.selectbox(
+    selected_filter = st.selectbox(
         "Search within document",
         ["All Documents"] + available_files
     )
-    filter_source = None if filter_source == "All Documents" else filter_source
-                
+    filter_source = None if selected_filter.lower() == "all documents" else selected_filter
 
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
@@ -162,20 +159,23 @@ if "messages" not in st.session_state:
 
 # Pre-warm model
 if "model_warmed" not in st.session_state or st.session_state.current_model != st.session_state.get("warmed_model"):
-    try:
-        import requests
-        requests.post(
-            "http://localhost:11434/api/generate",
-            json={"model": selected_model, "prompt": " ", "keep_alive": "30m"},
-            timeout=30
-        )
-    except:
-        pass
+    import threading
+    def warm():
+        try:
+            import requests
+            requests.post(
+                "http://localhost:11434/api/generate",
+                json={"model": selected_model, "prompt": " ", "keep_alive": "30m"},
+                timeout=30
+            )
+        except:
+            pass
+    threading.Thread(target=warm, daemon=True).start()
     st.session_state.model_warmed = True
     st.session_state.warmed_model = selected_model
 
 
-# Helper: render a single message bubble 
+# Helper: render a single message bubble
 def render_message(msg):
     with st.chat_message(msg["role"]):
         if msg["role"] == "assistant":
@@ -226,31 +226,38 @@ if user_input:
         st.caption(f"🧠 Using model: {selected_model}")
         placeholder = st.empty()
         full_response = ""
-        sources = []
+        sources        = []
         context_chunks = []
-        tool_used = "rag_search"
-        result = {"grounded": False, "score": 0.0}
+        tool_used      = "rag_search"
+        attempts       = 1
+        result         = {"grounded": False, "score": 0.0}
 
         try:
             with st.spinner("🤖 Agent thinking..."):
-                response_gen, sources, context_chunks, tool_used = run_agent(
-                    query = user_input,
-                    model = selected_model,
-                    history = st.session_state.messages,
-                    filter_source = filter_source
+                response_gen, sources, context_chunks, tool_used, attempts = run_agent(
+                    query=user_input,
+                    model=selected_model,
+                    history=st.session_state.messages,
+                    filter_source=filter_source
                 )
-            
+
             tool_labels = {
-                "rag_search": "🔍 Searched documents",
+                "rag_search":    "🔍 Searched documents",
                 "direct_answer": "💡 Answered directly",
-                "clarify": "❓ Asking clarification"
+                "clarify":       "❓ Asking clarification"
             }
-            st.caption(tool_labels.get(tool_used,""))
+            label = tool_labels.get(tool_used, "")
+
+            # Show retry count if more than one attempt
+            if attempts > 1:
+                label += f" (retried {attempts - 1}x)"
+            st.caption(label)
+
             for token in response_gen:
                 full_response += token
                 placeholder.markdown(full_response)
 
-            # Hallucination check
+            # Hallucination check — only for rag_search
             if tool_used == "rag_search" and context_chunks:
                 result = check_hallucination(full_response, context_chunks)
                 if not result["grounded"]:
@@ -258,11 +265,10 @@ if user_input:
                 else:
                     st.caption(f"✅ Grounded ({result['score']})")
 
-            
             # Render Citations
             if sources:
                 citation_md = " ".join([
-                    f"`📄 {src}`" for src in sources                   
+                    f"`📄 {src}`" for src in sources
                 ])
                 st.markdown(f"**Sources:** {citation_md}")
 
@@ -272,12 +278,13 @@ if user_input:
 
     # Save assistant message
     st.session_state.messages.append({
-        "role": "assistant",
-        "content": full_response,
-        "model": selected_model,
-        "sources": sources,
-        "grounded": result["grounded"],
+        "role":       "assistant",
+        "content":    full_response,
+        "model":      selected_model,
+        "sources":    sources,
+        "grounded":   result["grounded"],
         "confidence": result["score"],
-        "tool_used":tool_used
+        "tool_used":  tool_used,
+        "attempts":   attempts
     })
     save_chat(selected_model, st.session_state.messages)

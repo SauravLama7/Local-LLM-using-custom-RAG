@@ -4,39 +4,32 @@ import requests
 OLLAMA_URL = "http://localhost:11434/api/generate"
 
 AGENT_SYSTEM_PROMPT = """
-You are an intelligent agent that decides how to answer user questions.
+You are an agent that routes questions to the right tool.
 
-You have access to these tools:
-1. rag_search   — search the document knowledge base for relevant information
-2. direct_answer — answer directly from your knowledge without searching
-3. clarify       — ask the user for clarification when the query is too vague
+Tools:
+1. rag_search    — search company documents (DEFAULT choice)
+2. direct_answer — only for greetings or basic math
+3. clarify       — only when query has no words to search with
 
-Given the user query, respond ONLY with a JSON object like this:
-{
-  "tool": "rag_search",
-  "reason": "The question is about company documents"
-}
+IMPORTANT RULES:
+- If the query mentions ANYTHING that could be in a document, use rag_search
+- Questions about "the company", "employees", "budget", "policy", "department", "name", "CEO" → ALWAYS rag_search
+- Greetings like "hi", "hello", "how are you" → direct_answer
+- Math like "2+2" → direct_answer
+- Vague single words with no context like "it", "that" → clarify
+- When in doubt → rag_search
 
-or:
-{
-  "tool": "direct_answer",
-  "reason": "This is a general knowledge question not related to documents"
-}
+Examples:
+"what is the company name?" → rag_search
+"who is the CEO?" → rag_search  
+"is bipin in development?" → rag_search
+"hello" → direct_answer
+"2+2" → direct_answer
+"tell me about it" → clarify
 
-or:
-{
-  "tool": "clarify",
-  "reason": "The query is too vague to search effectively",
-  "question": "Could you clarify what you mean by X?"
-}
-
-Rules:
-- Use rag_search for anything related to company data, employees, budgets, policies
-- Use direct_answer for greetings, general knowledge, math, coding questions
-- Use clarify when the query is too vague or ambiguous
-- Respond ONLY with valid JSON, no extra text
+Respond ONLY with valid JSON:
+{"tool": "rag_search", "reason": "question about company"}
 """
-
 def decide_tool(query:str, model:str) -> dict:
     """Ask the LLM which tool to use for theis query."""
     payload = {
