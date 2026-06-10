@@ -37,6 +37,15 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None):
     metadatas   = results["metadatas"][0]
     meta_lookup = {doc: meta for doc, meta in zip(vector_docs, metadatas)}
 
+    # Filter BM25 results to selected source if filter is active
+    if filter_source:
+        bm25_docs = [
+            doc for doc in bm25_docs
+            if doc in meta_lookup and
+            meta_lookup[doc].get("source") == filter_source
+        ]
+        print(f"🔎 BM25 filtered to {len(bm25_docs)} chunks from {filter_source}")
+
     # Fuse result (RRF)
     fused_docs = reciprocal_rank_fusion(vector_docs, bm25_docs)
 
