@@ -120,7 +120,7 @@ def ingest():
         metadatas = all_metadata
     )
 
-    save_bm25(all_docs)
+    save_bm25(all_docs, all_metadata)
 
     # Save updated hashes only after sucessful ingest
     save_hashes(updated_hashes)

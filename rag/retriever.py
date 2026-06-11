@@ -31,11 +31,16 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None):
         bm25_future = executor.submit(bm25_search, query, k)
 
         results   = vector_future.result()
-        bm25_docs = bm25_future.result()
+        bm25_docs, bm25_metas = bm25_future.result()
 
     vector_docs = results["documents"][0]
     metadatas   = results["metadatas"][0]
     meta_lookup = {doc: meta for doc, meta in zip(vector_docs, metadatas)}
+
+     # BM25 metadata to meta_lookup for unknown source
+    for doc, meta in zip(bm25_docs, bm25_metas):
+        if doc not in meta_lookup:
+            meta_lookup[doc] = meta
 
     # Filter BM25 results to selected source if filter is active
     if filter_source:
