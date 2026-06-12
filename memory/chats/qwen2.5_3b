@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "what is the company leave policy"
+  },
+  {
+    "role": "assistant",
+    "content": "The company leave policy states that employees are entitled to 18 paid leave days per year. Sick leave must be reported on the same day, while planned leave requires submission at least 3 days in advance. Excessive absenteeism may affect performance evaluation.",
+    "model": "qwen2.5:3b",
+    "sources": [
+      "Dummy company policy.txt"
+    ],
+    "grounded": true,
+    "confidence": 0.73,
+    "tool_used": "rag_search",
+    "attempts": 1
+  }
+]

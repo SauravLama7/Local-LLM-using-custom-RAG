@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 import streamlit as st
 import base64
+from auth.login_page import show_login_page
+from auth.db import get_allowed_docs, init_db
 from rag.agent_runner import run_agent
 from rag.llm import VISION_MODELS
 from memory.chat_store import load_chat, save_chat
@@ -26,9 +28,68 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Auth gate 
+init_db()  # ensure DB exists
+if "logged_in" not in st.session_state or not st.session_state.logged_in:
+    show_login_page()
+    st.stop()  
+
+# Get current user info
+current_user = st.session_state.user
+is_guest     = st.session_state.is_guest
+
 # SIDEBAR
 with st.sidebar:
     st.title("⚙️ Settings")
+
+    # User info 
+    st.markdown("### 👤 User")
+    st.success(f"**{current_user['name']}**")
+    st.caption(f"Role: `{current_user['role']}`")
+    if st.button("🚪 Logout"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+
+    # Admin Panel — only for admin role 
+    if current_user["role"] == "admin":
+        st.markdown("### 🛠️ Admin Panel")
+        with st.expander("👥 Manage Users"):
+
+            # Add new user
+            st.markdown("#### Add User")
+            new_username = st.text_input("Username", key="new_username")
+            new_password = st.text_input("Password", type="password", key="new_password")
+            new_name     = st.text_input("Full Name", key="new_name")
+            new_role     = st.selectbox("Role", ["admin", "hr", "dev", "finance", "guest"], key="new_role")
+
+            if st.button("➕ Add User"):
+                if not new_username or not new_password or not new_name:
+                    st.error("All fields required.")
+                else:
+                    from auth.db import add_user
+                    success = add_user(new_username, new_password, new_name, new_role)
+                    if success:
+                        st.success(f"✅ User '{new_username}' added.")
+                    else:
+                        st.error(f"❌ Username '{new_username}' already exists.")
+
+            st.divider()
+
+            # View and delete users 
+            st.markdown("#### Current Users")
+            from auth.db import get_all_users, delete_user
+            users = get_all_users()
+            for u in users:
+                col1, col2, col3 = st.columns([2, 1, 1])
+                col1.caption(f"**{u['name']}** (`{u['username']}`)")
+                col2.caption(f"`{u['role']}`")
+                if u["username"] != "admin":  # prevent deleting admin
+                    if col3.button("🗑️", key=f"del_user_{u['username']}"):
+                        delete_user(u["username"])
+                        st.toast(f"Deleted {u['username']}")
+                        st.rerun()
+
     st.markdown("### Model Info")
     st.info("qwen2.5:3b and ministral-3:3b are the two models available. ministral-3:3b also supports vision")
 
@@ -72,7 +133,7 @@ with st.sidebar:
             from scripts.ingest import ingest
 
             os.makedirs("data/raw", exist_ok=True)
-            saved = []
+            saved   = []
             skipped = []
 
             for doc in doc_files:
@@ -127,19 +188,22 @@ with st.sidebar:
         else:
             st.caption("No documents yet")
 
+    # Filter source — filtered by role 
     st.markdown("🔎 Filter Source")
-    raw_path = Path("data/raw")
-    available_files = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
+    raw_path        = Path("data/raw")
+    all_files       = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
+    available_files = get_allowed_docs(current_user["role"], all_files)  # ← role filtered
     selected_filter = st.selectbox(
         "Search within document",
         ["All Documents"] + available_files
     )
     filter_source = None if selected_filter.lower() == "all documents" else selected_filter
-
+    
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
         st.session_state.pop("sources", None)
-        save_chat(selected_model, [])
+        if not is_guest:
+            save_chat(selected_model, [])
         st.rerun()
 
     st.markdown("---")
@@ -155,7 +219,7 @@ st.caption("Ask questions over your documents using local AI")
 
 # SESSION STATE
 if "messages" not in st.session_state:
-    st.session_state.messages = load_chat(selected_model)
+    st.session_state.messages = [] if is_guest else load_chat(selected_model)
 
 # Pre-warm model
 if "model_warmed" not in st.session_state or st.session_state.current_model != st.session_state.get("warmed_model"):
@@ -218,14 +282,18 @@ if user_input:
         user_msg["image_b64"] = base64.b64encode(uploaded_image).decode("utf-8")
 
     st.session_state.messages.append(user_msg)
-    save_chat(selected_model, st.session_state.messages)
+
+    # Don't save chat for guests
+    if not is_guest:
+        save_chat(selected_model, st.session_state.messages)
+
     render_message(user_msg)
 
     # Generate response
     with st.chat_message("assistant"):
         st.caption(f"🧠 Using model: {selected_model}")
-        placeholder = st.empty()
-        full_response = ""
+        placeholder    = st.empty()
+        full_response  = ""
         sources        = []
         context_chunks = []
         tool_used      = "rag_search"
@@ -287,4 +355,7 @@ if user_input:
         "tool_used":  tool_used,
         "attempts":   attempts
     })
-    save_chat(selected_model, st.session_state.messages)
+
+    # Don't save chat for guests
+    if not is_guest:
+        save_chat(selected_model, st.session_state.messages)
