@@ -101,7 +101,7 @@ with st.sidebar:
         st.session_state.current_model = selected_model
     if st.session_state.current_model != selected_model:
         st.session_state.current_model = selected_model
-        st.session_state.messages = load_chat(selected_model)
+        st.session_state.messages = load_chat(current_user["username"], selected_model)
 
     st.sidebar.success(f"🧠 Active Model: {selected_model}")
 
@@ -203,7 +203,7 @@ with st.sidebar:
         st.session_state.messages = []
         st.session_state.pop("sources", None)
         if not is_guest:
-            save_chat(selected_model, [])
+            save_chat(current_user["username"], selected_model, [])
         st.rerun()
 
     st.markdown("---")
@@ -219,7 +219,7 @@ st.caption("Ask questions over your documents using local AI")
 
 # SESSION STATE
 if "messages" not in st.session_state:
-    st.session_state.messages = [] if is_guest else load_chat(selected_model)
+    st.session_state.messages = [] if is_guest else load_chat(current_user["username"], selected_model)
 
 # Pre-warm model
 if "model_warmed" not in st.session_state or st.session_state.current_model != st.session_state.get("warmed_model"):
@@ -285,7 +285,7 @@ if user_input:
 
     # Don't save chat for guests
     if not is_guest:
-        save_chat(selected_model, st.session_state.messages)
+        save_chat(current_user["username"], selected_model, st.session_state.messages)
 
     render_message(user_msg)
 
@@ -358,4 +358,4 @@ if user_input:
 
     # Don't save chat for guests
     if not is_guest:
-        save_chat(selected_model, st.session_state.messages)
+        save_chat(current_user["username"], selected_model, st.session_state.messages)
