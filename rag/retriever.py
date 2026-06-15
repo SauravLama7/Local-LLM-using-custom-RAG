@@ -6,7 +6,7 @@ from rag.fusion import reciprocal_rank_fusion
 from concurrent.futures import ThreadPoolExecutor
 
 
-def retrieve_docs(query, k=10, rerank_k=5, filter_source=None):
+def retrieve_docs(query, k=10, rerank_k=5, filter_source=None, allowed_sources = None):
     collection = get_collection()
 
     # Embed query
@@ -20,6 +20,8 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None):
     }
     if filter_source:
         query_params["where"] = {"source": filter_source}
+    elif allowed_sources is not None:
+        query_params["where"] = {"source": {"$in": allowed_sources}}
 
     # Running vector + BM25 in parallel
     with ThreadPoolExecutor(max_workers=2) as executor:
@@ -41,6 +43,14 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None):
     for doc, meta in zip(bm25_docs, bm25_metas):
         if doc not in meta_lookup:
             meta_lookup[doc] = meta
+
+    # Filter BM25 results by allowed sources too
+    if allowed_sources is not None:
+        bm25_docs = [
+            doc for doc in bm25_docs
+            if doc in meta_lookup and
+            meta_lookup[doc].get("source") in allowed_sources
+        ]
 
     # Filter BM25 results to selected source if filter is active
     if filter_source:

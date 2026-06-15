@@ -306,7 +306,8 @@ if user_input:
                     query=user_input,
                     model=selected_model,
                     history=st.session_state.messages,
-                    filter_source=filter_source
+                    filter_source=filter_source,
+                    allowed_sources = available_files if current_user["role"] != "admin" else None
                 )
 
             tool_labels = {

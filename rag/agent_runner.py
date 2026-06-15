@@ -28,7 +28,7 @@ Rephrased:""",
         return query  # fallback to original
 
 
-def run_agent(query: str, model: str, history: list, filter_source=None, max_retries: int = 2):
+def run_agent(query: str, model: str, history: list, filter_source=None, allowed_sources = None, max_retries: int = 2):
     """
     Main agent loop with self-correction.
     Returns: (response_generator, sources, context_chunks, tool_used, attempts)
@@ -55,7 +55,7 @@ Question: {query}
 Answer:""".strip()
         return generate(prompt, model=model), [], [], "direct_answer", 1
 
-    # ── RAG search with self-correction loop ─────────────────────
+    # RAG search with self-correction loop 
     current_query = query
     best_response = None
     best_sources  = []
@@ -72,7 +72,8 @@ Answer:""".strip()
             query=current_query,
             model=model,
             history=history,
-            filter_source=filter_source
+            filter_source=filter_source,
+            allowed_sources = allowed_sources
         )
 
         # Generate response (collect full response for scoring)
@@ -107,4 +108,4 @@ Answer:""".strip()
         yield best_response
 
     return response_gen(), best_sources, best_chunks, "rag_search", attempts
-    # ─────────────────────────────────────────────────────────────
+  
