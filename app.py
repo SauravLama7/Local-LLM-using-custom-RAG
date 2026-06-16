@@ -119,45 +119,46 @@ with st.sidebar:
             st.image(uploaded_image, caption="Image ready to send", use_container_width=True)
 
     # Add Document Feature
-    st.markdown("### 📄 Add New Documents")
-    doc_files = st.file_uploader(
-        """Upload documents to knowledge base""",
-        type=["pdf", "txt"],
-        accept_multiple_files=True,
-        key="doc_uploader"
-    )
+    if not is_guest:
+        st.markdown("### 📄 Add New Documents")
+        doc_files = st.file_uploader(
+            "Upload documents to knowledge base",
+            type=["pdf", "txt"],
+            accept_multiple_files=True,
+            key="doc_uploader"
+        )
 
-    if doc_files:
-        if st.button("⚡ Ingest Documents"):
-            import shutil
-            from scripts.ingest import ingest
+        if doc_files:
+            if st.button("⚡ Ingest Documents"):
+                import shutil
+                from scripts.ingest import ingest
 
-            os.makedirs("data/raw", exist_ok=True)
-            saved   = []
-            skipped = []
+                os.makedirs("data/raw", exist_ok=True)
+                saved   = []
+                skipped = []
 
-            for doc in doc_files:
-                dest = os.path.join("data/raw", doc.name)
+                for doc in doc_files:
+                    dest = os.path.join("data/raw", doc.name)
 
-                # Don't overwrite if identical file already exists
-                if os.path.exists(dest):
-                    skipped.append(doc.name)
-                    continue
+                    # Don't overwrite if identical file already exists
+                    if os.path.exists(dest):
+                        skipped.append(doc.name)
+                        continue
 
-                with open(dest, "wb") as f:
-                    shutil.copyfileobj(doc, f)
-                saved.append(doc.name)
+                    with open(dest, "wb") as f:
+                        shutil.copyfileobj(doc, f)
+                    saved.append(doc.name)
 
-            if saved:
-                with st.spinner(f"⚙️ Ingesting {len(saved)} file(s)..."):
-                    try:
-                        ingest()
-                        st.success(f"✅ Ingested: {', '.join(saved)}")
-                    except Exception as e:
-                        st.error(f"❌ Ingest failed: {str(e)}")
+                if saved:
+                    with st.spinner(f"⚙️ Ingesting {len(saved)} file(s)..."):
+                        try:
+                            ingest()
+                            st.success(f"✅ Ingested: {', '.join(saved)}")
+                        except Exception as e:
+                            st.error(f"❌ Ingest failed: {str(e)}")
 
-            if skipped:
-                st.info(f"⏭️ Already exists: {', '.join(skipped)}")
+                if skipped:
+                    st.info(f"⏭️ Already exists: {', '.join(skipped)}")
 
     st.markdown("### 🗂️ Knowledge Base")
     raw_path = Path("data/raw")
@@ -167,24 +168,19 @@ with st.sidebar:
             for f in files:
                 col1, col2 = st.columns([3, 1])
                 col1.caption(f"📄 {f.name}")
-                if col2.button("🗑️", key=f"del_{f.name}"):
-                    # Delete from disk
-                    f.unlink()
-                    # Delete from chromaDB
-                    from rag.vectordb import delete_by_source
-                    delete_by_source(f.name)
-                    # Rebuild BM25
-                    from rag.bm25_store import rebuild_bm25_without
-                    rebuild_bm25_without(f.name)
-                    # Remove from hash store so re-adding works
-                    from rag.hash_store import load_hashes, save_hashes
-                    hashes = load_hashes()
-                    # Remove by filepath
-                    updated = {k: v for k, v in hashes.items() if f.name not in k}
-                    save_hashes(updated)
-
-                    st.toast(f"Deleted {f.name}")
-                    st.rerun()
+                if not is_guest:
+                    if col2.button("🗑️", key=f"del_{f.name}"):
+                        f.unlink()
+                        from rag.vectordb import delete_by_source
+                        delete_by_source(f.name)
+                        from rag.bm25_store import rebuild_bm25_without
+                        rebuild_bm25_without(f.name)
+                        from rag.hash_store import load_hashes, save_hashes
+                        hashes = load_hashes()
+                        updated = {k: v for k, v in hashes.items() if f.name not in k}
+                        save_hashes(updated)
+                        st.toast(f"Deleted {f.name}")
+                        st.rerun()
         else:
             st.caption("No documents yet")
 
