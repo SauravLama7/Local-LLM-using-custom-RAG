@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "how many employees are there? list them out"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context, here is a detailed breakdown of the current active employees at **Nexora Technologies Pvt. Ltd.** as of June 2026:\n\n### **Executive Team (3)**\n1. **Rohan Sharma** – CEO (NX-001)\n   - [Source: Context [2]]\n\n2. **Aisha Thapa** – COO (NX-002)\n   - [Source: Context [2]]\n\n3. **Daniel KC** – CTO (NX-003)\n   - [Source: Context [2]]\n\n---\n\n### **Operations & HR (2)**\n4. **Suresh Adhikari** – Project Manager (Operations, NX-101)\n   - [Source: Context [2]]\n\n5. **Priya Joshi** – HR Manager (HR, NX-102)\n   - [Source: Context [2]]\n\n---\n\n### **Finance (1)**\n6. **Michael Rai** – Finance Manager (NX-103)\n   - [Source: Context [2]]\n\n---\n### **Design Team (2)**\n7. **Maya Maharjan** – UI/UX Designer (Design, NX-301)\n8. **Pratik Shrestha** – Graphic Designer (Design, NX-302)\n   - [Sources: Contexts [1], [4]]\n\n---\n### **IT Support & Administration (2)**\n9. **Ashok Lama** – IT Support Specialist (IT, NX-502)\n10. **Jennifer Gurung** – System Administrator (IT, NX-601)\n   - [Sources: Contexts [1], [4]]\n\n---\n### **Sales & Marketing (3)**\n11. **Amit Bista** – Sales Executive (Sales, NX-602)\n    - [Source: Context [1]]\n12. **Lina Shrestha** – Marketing Specialist (Marketing, NX-602) *(Note: Same Emp ID as Amit Bista but different position—likely a misalignment in the provided data.)*\n    - [Sources: Contexts [1], [3]]\n\n   *(Clarification: If Lina Shrestha is intended to be separate from Amit Bista, verify with HR records. Otherwise, she may be listed under Sales/Marketing as a dual-role employee.)*\n\n13. **Prashant KC** – Business Development Officer (Sales, NX-603)\n    - [Sources: Contexts [1], [3]]\n\n---\n### **QA Team (2)**\n14. **Bipin KC** – QA Lead (QA, NX-402)\n15. **Sunita Bhandari** – QA Engineer (QA, NX-501)\n   - [Sources: Contexts [1], [4]]\n\n---\n### **Development Team (5)**\n16. **Anil Gurung** – Senior Software Engineer (NX-201)\n17. **Sara Khatri** – Backend Developer (NX-202)\n18. **Rajesh Lama** – Frontend Developer (NX-203)\n19. **Nisha Shrestha** – Full Stack Developer (NX-204)\n20. **Kevin Tamang** – Junior Developer (NX-205)\n   - [Sources: Contexts [2], [4]]\n\n---\n### **Total Active Employees Counted:**\n**3 (Executive) + 2 (Operations/HR) + 1 (Finance)",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.74,
+    "tool_used": "rag_search",
+    "attempts": 1
+  }
+]

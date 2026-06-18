@@ -28,10 +28,12 @@ Rephrased:""",
         return query  # fallback to original
 
 
-def run_agent(query: str, model: str, history: list, filter_source=None, allowed_sources = None, max_retries: int = 2):
+def run_agent(query: str, model: str, history: list, filter_source=None, allowed_sources=None,
+              max_retries: int = 1, stream_callback=None):
     """
     Main agent loop with self-correction.
-    Returns: (response_generator, sources, context_chunks, tool_used, attempts)
+    stream_callback(token): called for each token on the FIRST attempt only — enables live streaming.
+    Returns: (full_response, sources, context_chunks, tool_used, attempts, was_streamed)
     """
 
     # Step 1: Decide which tool to use
@@ -40,12 +42,12 @@ def run_agent(query: str, model: str, history: list, filter_source=None, allowed
     reason   = decision.get("reason", "")
     print(f"🤖 Agent chose: {tool} — {reason}")
 
-    # Non-RAG tools don't need self-correction
+    # Non-RAG tools don't need self-correction — stream directly
     if tool == "clarify":
         clarify_question = decision.get("question", "Could you clarify your question?")
-        def clarify_gen():
-            yield clarify_question
-        return clarify_gen(), [], [], "clarify", 1
+        if stream_callback:
+            stream_callback(clarify_question)
+        return clarify_question, [], [], "clarify", 1, True
 
     elif tool == "direct_answer":
         prompt = f"""You are a helpful assistant. Answer this question directly.
@@ -53,7 +55,12 @@ def run_agent(query: str, model: str, history: list, filter_source=None, allowed
 Question: {query}
 
 Answer:""".strip()
-        return generate(prompt, model=model), [], [], "direct_answer", 1
+        full_response = ""
+        for token in generate(prompt, model=model):
+            full_response += token
+            if stream_callback:
+                stream_callback(token)
+        return full_response, [], [], "direct_answer", 1, True
 
     # RAG search with self-correction loop 
     current_query = query
@@ -62,6 +69,7 @@ Answer:""".strip()
     best_chunks   = []
     best_score    = -1
     attempts      = 0
+    was_streamed  = False
 
     for attempt in range(max_retries + 1):
         attempts = attempt + 1
@@ -73,13 +81,24 @@ Answer:""".strip()
             model=model,
             history=history,
             filter_source=filter_source,
-            allowed_sources = allowed_sources
+            allowed_sources=allowed_sources
         )
 
-        # Generate response (collect full response for scoring)
+        # Generate response
         full_response = ""
-        for token in generate(prompt, model=model):
-            full_response += token
+
+        if attempt == 0:
+            # First attempt: stream live to the UI
+            for token in generate(prompt, model=model):
+                full_response += token
+                if stream_callback:
+                    stream_callback(token)
+            was_streamed = True
+        else:
+            # Retry attempt: generate silently, no live streaming 
+            for token in generate(prompt, model=model):
+                full_response += token
+            was_streamed = False
 
         # Check quality
         result = check_hallucination(full_response, context_chunks)
@@ -103,9 +122,5 @@ Answer:""".strip()
             print(f"🔄 Low score ({score}), rephrasing and retrying...")
             current_query = rephrase_query(current_query, model)
 
-    # Return best response as a generator
-    def response_gen():
-        yield best_response
-
-    return response_gen(), best_sources, best_chunks, "rag_search", attempts
-  
+    # was_streamed only True if the BEST response came from the streamed first attempt
+    return best_response, best_sources, best_chunks, "rag_search", attempts, was_streamed and attempts == 1

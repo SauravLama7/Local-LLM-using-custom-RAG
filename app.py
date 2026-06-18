@@ -297,14 +297,24 @@ if user_input:
         result         = {"grounded": False, "score": 0.0}
 
         try:
-            with st.spinner("🤖 Agent thinking..."):
-                response_gen, sources, context_chunks, tool_used, attempts = run_agent(
-                    query=user_input,
-                    model=selected_model,
-                    history=st.session_state.messages,
-                    filter_source=filter_source,
-                    allowed_sources = available_files if current_user["role"] != "admin" else None
-                )
+            placeholder_text = []
+
+            def on_token(token):
+                placeholder_text.append(token)
+                placeholder.markdown("".join(placeholder_text))
+
+            full_response, sources, context_chunks, tool_used, attempts, was_streamed = run_agent(
+                query=user_input,
+                model=selected_model,
+                history=st.session_state.messages,
+                filter_source=filter_source,
+                allowed_sources=available_files if current_user["role"] != "admin" else None,
+                stream_callback=on_token
+            )
+
+            # If retry happened, the streamed text doesn't match final answer — overwrite
+            if not was_streamed:
+                placeholder.markdown(full_response)
 
             tool_labels = {
                 "rag_search":    "🔍 Searched documents",
@@ -312,17 +322,10 @@ if user_input:
                 "clarify":       "❓ Asking clarification"
             }
             label = tool_labels.get(tool_used, "")
-
-            # Show retry count if more than one attempt
             if attempts > 1:
                 label += f" (retried {attempts - 1}x)"
             st.caption(label)
 
-            for token in response_gen:
-                full_response += token
-                placeholder.markdown(full_response)
-
-            # Hallucination check — only for rag_search
             if tool_used == "rag_search" and context_chunks:
                 result = check_hallucination(full_response, context_chunks)
                 if not result["grounded"]:
@@ -330,17 +333,14 @@ if user_input:
                 else:
                     st.caption(f"✅ Grounded ({result['score']})")
 
-            # Render Citations
             if sources:
-                citation_md = " ".join([
-                    f"`📄 {src}`" for src in sources
-                ])
+                citation_md = " ".join([f"`📄 {src}`" for src in sources])
                 st.markdown(f"**Sources:** {citation_md}")
 
         except Exception as e:
             full_response = f"❌ Error: {str(e)}"
             placeholder.error(full_response)
-
+            
     # Save assistant message
     st.session_state.messages.append({
         "role":       "assistant",
