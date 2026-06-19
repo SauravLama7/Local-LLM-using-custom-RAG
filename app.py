@@ -189,11 +189,12 @@ with st.sidebar:
     raw_path        = Path("data/raw")
     all_files       = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
     available_files = get_allowed_docs(current_user["role"], all_files)  # ← role filtered
-    selected_filter = st.selectbox(
+    selected_filter = st.multiselect(
         "Search within document",
-        ["All Documents"] + available_files
+        available_files,
+        placeholder = "Leave empty to search all documents"
     )
-    filter_source = None if selected_filter.lower() == "all documents" else selected_filter
+    filter_source = selected_filter if selected_filter else None
     
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []

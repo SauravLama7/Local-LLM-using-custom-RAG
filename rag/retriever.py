@@ -6,7 +6,7 @@ from rag.fusion import reciprocal_rank_fusion
 from concurrent.futures import ThreadPoolExecutor
 
 
-def retrieve_docs(query, k=10, rerank_k=5, filter_source=None, allowed_sources = None):
+def retrieve_docs(query, k=10, rerank_k=5, filter_source=None, allowed_sources=None):
     collection = get_collection()
 
     # Embed query
@@ -19,7 +19,11 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None, allowed_sources =
         "include": ["documents", "metadatas"]
     }
     if filter_source:
-        query_params["where"] = {"source": filter_source}
+        # Support both single string and list
+        if isinstance(filter_source, list):
+            query_params["where"] = {"source": {"$in": filter_source}} 
+        else:
+            query_params["where"] = {"source": filter_source}
     elif allowed_sources is not None:
         query_params["where"] = {"source": {"$in": allowed_sources}}
 
@@ -27,39 +31,38 @@ def retrieve_docs(query, k=10, rerank_k=5, filter_source=None, allowed_sources =
     with ThreadPoolExecutor(max_workers=2) as executor:
         vector_future = executor.submit(
             collection.query,
-            **query_params       
+            **query_params
         )
-
         bm25_future = executor.submit(bm25_search, query, k)
 
-        results   = vector_future.result()
+        results               = vector_future.result()
         bm25_docs, bm25_metas = bm25_future.result()
 
     vector_docs = results["documents"][0]
     metadatas   = results["metadatas"][0]
     meta_lookup = {doc: meta for doc, meta in zip(vector_docs, metadatas)}
 
-     # BM25 metadata to meta_lookup for unknown source
+    # BM25 metadata to meta_lookup for unknown source
     for doc, meta in zip(bm25_docs, bm25_metas):
         if doc not in meta_lookup:
             meta_lookup[doc] = meta
 
-    # Filter BM25 results by allowed sources too
-    if allowed_sources is not None:
+    # Filter BM25 results — only one block needed 
+    if filter_source:
+        selected = filter_source if isinstance(filter_source, list) else [filter_source]
+        bm25_docs = [
+            doc for doc in bm25_docs
+            if doc in meta_lookup and
+            meta_lookup[doc].get("source") in selected
+        ]
+        print(f"🔎 BM25 filtered to {len(bm25_docs)} chunks from {selected}")
+    elif allowed_sources is not None:
         bm25_docs = [
             doc for doc in bm25_docs
             if doc in meta_lookup and
             meta_lookup[doc].get("source") in allowed_sources
         ]
-
-    # Filter BM25 results to selected source if filter is active
-    if filter_source:
-        bm25_docs = [
-            doc for doc in bm25_docs
-            if doc in meta_lookup and
-            meta_lookup[doc].get("source") == filter_source
-        ]
-        print(f"🔎 BM25 filtered to {len(bm25_docs)} chunks from {filter_source}")
+        print(f"🔎 BM25 filtered to {len(bm25_docs)} chunks from allowed sources")
 
     # Fuse result (RRF)
     fused_docs = reciprocal_rank_fusion(vector_docs, bm25_docs)
