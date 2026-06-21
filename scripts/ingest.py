@@ -1,9 +1,10 @@
 from pathlib import Path
 import fitz
+import csv
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from rag.embedding import embed
-from rag.vectordb import get_collection
+from rag.vectordb import get_collection, delete_by_source
 from rag.bm25_store import save_bm25
 from rag.hash_store import get_changed_files, save_hashes
 
@@ -25,6 +26,16 @@ def read_pdf(file_path):
 
     return text
 
+# CSV Reader
+def read_csv(file_path):
+    text= ""
+    with open(file_path, "r", encoding = "utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            row_text = ", ".join(f"{k}: {v}" for k, v in row.items() if v.strip())
+            text += row_text + "\n"
+    return text
+
 
 # Load Files
 def load_files(path):
@@ -41,6 +52,10 @@ def load_files(path):
         elif suffix == ".pdf":
             text = read_pdf(file)
             texts.append((file.name,text, str(file)))
+        
+        elif suffix == ".csv":
+            text = read_csv(file)
+            texts.append((file.name, text, str(file)))
 
     return texts
 
@@ -90,6 +105,9 @@ def ingest():
         if not text.strip():
             print(f"Skipping empty files:{filename}")
             continue
+        
+        # Delete old chunks before re-ingesting
+        delete_by_source(filename)
         
         chunks = chunk_text(text)
         embeddings = embed(chunks)

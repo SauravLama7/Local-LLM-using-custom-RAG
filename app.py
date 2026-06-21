@@ -123,7 +123,7 @@ with st.sidebar:
         st.markdown("### 📄 Add New Documents")
         doc_files = st.file_uploader(
             "Upload documents to knowledge base",
-            type=["pdf", "txt"],
+            type=["pdf", "txt", "csv"],
             accept_multiple_files=True,
             key="doc_uploader"
         )

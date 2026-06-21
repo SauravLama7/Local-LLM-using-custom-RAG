@@ -1,0 +1,21 @@
+Asset_ID,Asset_Type,Brand_Model,Serial_Number,Assigned_To,Employee_ID,Department,Purchase_Date,Purchase_Cost,Status,Location,Condition,Last_Audit_Date,Remarks
+AST-001,Laptop,Dell Latitude 5420,DL5420-AX89,Rohan Sharma,NX-001,Executive,2025-03-10,150000,In Use,Office HQ,Good,2026-06-01,CEO primary laptop
+AST-002,Laptop,MacBook Pro M2,MBP-M2-7781,Aisha Thapa,NX-002,Executive,2025-06-15,180000,In Use,Office HQ,Excellent,2026-06-01,COO workstation
+AST-003,Laptop,MacBook Pro M3,MBP-M3-5512,Daniel KC,NX-003,Executive,2025-07-01,210000,In Use,Office HQ,Excellent,2026-06-01,CTO development + architecture work
+AST-004,Laptop,HP ProBook 450 G9,HP450G9-8821,Suresh Adhikari,NX-101,Operations,2025-02-18,90000,In Use,Office HQ,Fair,2026-06-01,Project management tasks
+AST-005,Laptop,Dell Inspiron 14,DI14-7710,Priya Joshi,NX-102,HR,2025-03-22,85000,In Use,Office HQ,Good,2026-06-01,HR management system access
+AST-006,Laptop,Lenovo ThinkPad E14,TP-E14-4401,Michael Rai,NX-103,Finance,2025-04-05,95000,In Use,Office HQ,Good,2026-06-01,Finance and payroll system
+AST-007,Laptop,Lenovo ThinkPad T14,T14-8892,Anil Gurung,NX-201,Development,2025-01-12,120000,In Use,Office HQ,Good,2026-06-01,Senior dev machine
+AST-008,Laptop,MacBook Air M2,MBA-M2-3321,Sara Khatri,NX-202,Development,2025-05-18,140000,In Use,Remote,Excellent,2026-06-01,Backend development work
+AST-009,Laptop,MacBook Air M1,MBA-M1-7789,Rajesh Lama,NX-203,Development,2025-02-25,130000,In Use,Remote,Good,2026-06-01,Frontend development
+AST-010,Laptop,Dell XPS 13,XPS13-5566,Nisha Shrestha,NX-204,Development,2025-06-10,160000,In Use,Office HQ,Excellent,2026-06-01,Full stack development
+AST-011,Laptop,HP Pavilion 14,HP14-9911,Kevin Tamang,NX-205,Development,2025-08-01,80000,In Use,Office HQ,Good,2026-06-01,Junior dev training machine
+AST-012,Tablet,iPad 10th Gen,IP10-5567,Maya Maharjan,NX-301,Design,2025-09-10,65000,In Use,Remote,Excellent,2026-06-01,UI/UX prototyping
+AST-013,Laptop,MacBook Pro 14,MBP14-2209,Pratik Shrestha,NX-302,Design,2025-07-20,200000,In Use,Office HQ,Excellent,2026-06-01,Graphic design workstation
+AST-014,Desktop,Custom Workstation,CWS-7744,Bipin KC,NX-401,QA,2025-03-15,170000,In Use,Office HQ,Good,2026-06-01,QA automation testing
+AST-015,Laptop,Lenovo ThinkPad X1,X1-9902,Sunita Bhandari,NX-402,QA,2025-04-28,140000,In Use,Office HQ,Good,2026-06-01,Manual + automation QA
+AST-016,Laptop,Dell Latitude 5430,DL5430-1188,Ashok Lama,NX-501,IT,2025-02-10,110000,In Use,Office HQ,Good,2026-06-01,IT support operations
+AST-017,Laptop,HP EliteBook 840,HP840-6677,Jennifer Gurung,NX-502,IT,2025-01-30,130000,In Use,Office HQ,Excellent,2026-06-01,System administration
+AST-018,Laptop,Lenovo V15,V15-4409,Amit Bista,NX-601,Sales,2025-05-05,75000,In Use,Field,Good,2026-06-01,Client meetings + sales
+AST-019,Laptop,Asus VivoBook 15,VB15-3320,Lina Shrestha,NX-602,Marketing,2025-06-25,80000,In Use,Remote,Good,2026-06-01,Marketing campaigns
+AST-020,Laptop,HP ProBook 440,HP440-7780,Prashant KC,NX-603,Sales,2025-03-18,90000,In Use,Field,Good,2026-06-01,Business development work
