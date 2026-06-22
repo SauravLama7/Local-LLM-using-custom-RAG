@@ -1,0 +1,14 @@
+[
+    {
+        "question": "Who is the CEO of Nexora Technologies?",
+        "ground_truth": "Rohan Sharma is the CEO of Nexora Technologies Pvt. Ltd."
+    },
+    {
+        "question": "How many employees are in the QA department?",
+        "ground_truth": "There are 2 employees in the QA department in 2026."
+    },
+    {
+        "question": "What is the role of the HR department?",
+        "ground_truth": "The HR department manages employee records, policies, onboarding and analytics."
+    }
+]
