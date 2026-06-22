@@ -3,11 +3,12 @@ from pathlib import Path
 import streamlit as st
 import base64
 from auth.login_page import show_login_page
-from auth.db import get_allowed_docs, init_db
+from auth.db import get_allowed_docs, init_db, log_query
 from rag.agent_runner import run_agent
 from rag.llm import VISION_MODELS
 from memory.chat_store import load_chat, save_chat
 from rag.hallucination_guard import check_hallucination
+
 
 # PAGE CONFIG
 st.set_page_config(
@@ -89,6 +90,26 @@ with st.sidebar:
                         delete_user(u["username"])
                         st.toast(f"Deleted {u['username']}")
                         st.rerun()
+            
+         # Audit viewer
+        with st.expander("📋 Audit Log"):
+            from auth.db import get_audit_log
+            logs = get_audit_log(limit=50)
+            if logs:
+                for entry in logs:
+                    grounded_icon = "✅" if entry["grounded"] else "⚠️"
+                    st.caption(
+                        f"{entry['timestamp']} | "
+                        f"**{entry['username']}** (`{entry['role']}`) | "
+                        f"{entry['tool_used']} | "
+                        f"{grounded_icon} {entry['score']} | "
+                        f"{entry['query'][:60]}"
+                    )
+                    if entry["sources"]:
+                        st.caption(f"  📄 {entry['sources']}")
+                    st.divider()
+            else:
+                st.caption("No queries logged yet.")
 
     st.markdown("### Model Info")
     st.info("qwen2.5:3b and ministral-3:3b are the two models available. ministral-3:3b also supports vision")
@@ -333,6 +354,19 @@ if user_input:
                     st.warning(f"⚠️ Low confidence ({result['score']}) — answer may not be grounded in your documents.")
                 else:
                     st.caption(f"✅ Grounded ({result['score']})")
+
+            # Log query to audit log
+            if not is_guest:
+                log_query(
+                    username = current_user["username"],
+                    role = current_user["role"],
+                    query = user_input,
+                    tool_used = tool_used,
+                    grounded = result["grounded"],
+                    score = result["score"],
+                    sources = sources,
+                    model = selected_model
+                )
 
             if sources:
                 citation_md = " ".join([f"`📄 {src}`" for src in sources])

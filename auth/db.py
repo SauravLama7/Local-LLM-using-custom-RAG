@@ -35,6 +35,24 @@ def init_db():
 
     conn.commit()
 
+    # Create audit log table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS audit_log (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp  TEXT    NOT NULL,
+            username   TEXT    NOT NULL,
+            role       TEXT    NOT NULL,
+            query      TEXT    NOT NULL,
+            tool_used  TEXT    NOT NULL,
+            grounded   INTEGER NOT NULL,
+            score      REAL    NOT NULL,
+            sources    TEXT    NOT NULL,
+            model      TEXT    NOT NULL
+        )
+    """)
+    conn.commit()
+
+
     # Insert default users if table is empty
     c.execute("SELECT COUNT(*) FROM users")
     if c.fetchone()[0] == 0:
@@ -175,3 +193,47 @@ def get_role_permissions(role: str) -> list[str]:
     keywords = [row[0] for row in c.fetchall()]
     conn.close()
     return keywords
+    
+def log_query(username: str, role: str, query: str, tool_used: str,
+              grounded: bool, score: float, sources: list, model: str):
+    """Log a query to the audit log."""
+    from datetime import datetime
+    conn = get_connection()
+    c    = conn.cursor()
+    c.execute("""
+        INSERT INTO audit_log (timestamp, username, role, query, tool_used, grounded, score, sources, model)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        username,
+        role,
+        query,
+        tool_used,
+        int(grounded),
+        score,
+        ", ".join(sources),
+        model
+    ))
+    conn.commit()
+    conn.close()
+
+def get_audit_log(limit: int = 50) -> list[dict]:
+    """Get recent audit log entries."""
+    conn = get_connection()
+    c    = conn.cursor()
+    c.execute("""
+        SELECT timestamp, username, role, query, tool_used, grounded, score, sources, model
+        FROM audit_log
+        ORDER BY id DESC
+        LIMIT ?
+    """, (limit,))
+    rows = c.fetchall()
+    conn.close()
+    return [
+        {
+            "timestamp": r[0], "username": r[1], "role":     r[2],
+            "query":     r[3], "tool_used": r[4], "grounded": bool(r[5]),
+            "score":     r[6], "sources":   r[7], "model":    r[8]
+        }
+        for r in rows
+    ]
