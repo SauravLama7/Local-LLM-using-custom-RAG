@@ -5,10 +5,38 @@
     },
     {
         "question": "How many employees are in the QA department?",
-        "ground_truth": "There are 2 employees in the QA department in 2026."
+        "ground_truth": "There are 2 employees in the QA department."
     },
     {
         "question": "What is the role of the HR department?",
         "ground_truth": "The HR department manages employee records, policies, onboarding and analytics."
+    },
+    {
+        "question": "Who is the CTO of Nexora Technologies?",
+        "ground_truth": "Daniel KC is the CTO of Nexora Technologies Pvt. Ltd."
+    },
+    {
+        "question": "How many total employees does Nexora have in 2026?",
+        "ground_truth": "Nexora Technologies has 20 total employees in 2026."
+    },
+    {
+        "question": "What departments exist in Nexora Technologies?",
+        "ground_truth": "Nexora Technologies has Executive, Operational, HR, Development, QA, Finance, Design, IT, Sales and Marketing departments."
+    },
+    {
+        "question": "What is Priya Joshi working on?",
+        "ground_truth": "Priya Joshi is working on developing a new HR analytics system and automating the employee onboarding process."
+    },
+    {
+        "question": "What is Michael Rai's role?",
+        "ground_truth": "Michael Rai is the Finance Manager at Nexora Technologies."
+    },
+    {
+        "question": "What is the company's leave policy?",
+        "ground_truth": "The company provides annual leave, sick leave and public holidays as part of its leave policy."
+    },
+    {
+        "question": "What is the total expenses for 2026?",
+        "ground_truth": "The total expenses for 2026 is estimated to be 55,060,000 in the Nexora Budget Plan 2026 document."
     }
 ]
