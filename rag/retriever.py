@@ -6,7 +6,7 @@ from rag.fusion import reciprocal_rank_fusion
 from concurrent.futures import ThreadPoolExecutor
 
 
-def retrieve_docs(query, k=7, rerank_k=3, filter_source=None, allowed_sources=None):
+def retrieve_docs(query, k=7, rerank_k=4, filter_source=None, allowed_sources=None):
     collection = get_collection()
 
     # Embed query

@@ -331,7 +331,8 @@ if user_input:
                 history=st.session_state.messages,
                 filter_source=filter_source,
                 allowed_sources=available_files if current_user["role"] != "admin" else None,
-                stream_callback=on_token
+                stream_callback=on_token,
+                image_bytes = uploaded_image
             )
 
             # If retry happened, the streamed text doesn't match final answer — overwrite
