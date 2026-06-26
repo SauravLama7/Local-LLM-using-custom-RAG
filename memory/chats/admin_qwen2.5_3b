@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "what is the name of the company"
+  },
+  {
+    "role": "assistant",
+    "content": "The name of the company is Nexora Technologies Pvt. Ltd. [2], [1]",
+    "model": "qwen2.5:3b",
+    "sources": [
+      "Dummy company policy.txt",
+      "Nexora_Corporate_Report_General.pdf",
+      "Nexora_Budget_Plan_2025.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.67,
+    "tool_used": "rag_search",
+    "attempts": 1
+  }
+]

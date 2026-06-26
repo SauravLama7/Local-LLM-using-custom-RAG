@@ -319,11 +319,15 @@ if user_input:
         result         = {"grounded": False, "score": 0.0}
 
         try:
-            placeholder_text = []
+            placeholder_text   = []
+            status_placeholder = st.empty()  # ← live status display
 
             def on_token(token):
                 placeholder_text.append(token)
                 placeholder.markdown("".join(placeholder_text))
+
+            def on_status(msg):
+                status_placeholder.caption(f"⏳ {msg}")
 
             full_response, sources, context_chunks, tool_used, attempts, was_streamed = run_agent(
                 query=user_input,
@@ -332,8 +336,12 @@ if user_input:
                 filter_source=filter_source,
                 allowed_sources=available_files if current_user["role"] != "admin" else None,
                 stream_callback=on_token,
-                image_bytes = uploaded_image
+                image_bytes=uploaded_image,
+                status_callback=on_status  # ← added
             )
+
+            # Clear status once done
+            status_placeholder.empty()
 
             # If retry happened, the streamed text doesn't match final answer — overwrite
             if not was_streamed:
@@ -359,14 +367,14 @@ if user_input:
             # Log query to audit log
             if not is_guest:
                 log_query(
-                    username = current_user["username"],
-                    role = current_user["role"],
-                    query = user_input,
-                    tool_used = tool_used,
-                    grounded = result["grounded"],
-                    score = result["score"],
-                    sources = sources,
-                    model = selected_model
+                    username=current_user["username"],
+                    role=current_user["role"],
+                    query=user_input,
+                    tool_used=tool_used,
+                    grounded=result["grounded"],
+                    score=result["score"],
+                    sources=sources,
+                    model=selected_model
                 )
 
             if sources:
