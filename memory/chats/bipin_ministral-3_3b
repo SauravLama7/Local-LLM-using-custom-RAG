@@ -1,0 +1,68 @@
+[
+  {
+    "role": "user",
+    "content": "who is working at QA department/"
+  },
+  {
+    "role": "assistant",
+    "content": "❌ Error: disk I/O error",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.66,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "who is working at qa departmane"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context, the following individuals are currently working in the **QA (Quality Assurance) department** at Nexora Technologies Pvt. Ltd.:\n\n1. **[Bipin KC]** – QA Lead ([1], [3])\n   - Position: QA Lead\n   - Employee ID: NX-401\n\n2. **[Sunita Bhandari]** – QA Engineer ([1], [3])\n   - Position: QA Engineer\n   - Employee ID: NX-402",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.64,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "who are at IT department"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context from **Nexora Technologies Pvt. Ltd.** employee records ([2]), the following individuals work in the **IT department**:\n\n1. **[Ashok Lama]** – IT Support Specialist ([2])\n   - Employee ID: NX-502\n\n2. **[Jennifer Gurung]** – System Administrator ([2])\n   - Employee ID: NX-601",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Dummy company policy.txt",
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.74,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "what is the estimated budget of year 2025"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context for **Nexora Technologies Pvt. Ltd.** ([3], [4]), there is no explicit information regarding the **estimated budget for the year 2025**.\n\nThe available financial details only include:\n- The **Finance Manager** (Michael Rai, NX-103) and a mention of Anil Gurung as a *Senior Software Engineer* in Development ([3], [4]).\n- No figures or allocations related to budgeting are present.\n\nIf you need budget-related data for 2025, it would require additional records outside the current context.",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_HR_Employee_Table.pdf",
+      "Dummy company policy.txt"
+    ],
+    "grounded": true,
+    "confidence": 0.45,
+    "tool_used": "rag_search",
+    "attempts": 1
+  }
+]

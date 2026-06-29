@@ -66,6 +66,37 @@ splitter = RecursiveCharacterTextSplitter(
     chunk_overlap = OVERLAP
 )
 
+# PDF (split by paragraph, first then by size)
+def chunk_pdf(text):
+    # Split on double newline (paragraph) first
+    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    chunks = []
+    for para in paragraphs:
+        if len(para) > CHUNK_SIZE:
+            # Split large paragraphs further
+            chunks.extend(splitter.split_text(para))
+        else:
+            chunks.append(para)
+    return chunks
+    
+# CSV (each row is already a natural chunk , dont split rows)
+def chunk_csv(text):
+    # Each line in one record - keep them together
+    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    chunks = []
+    current = ""
+    for line in lines:
+        if len(current) + len(line) < CHUNK_SIZE:
+            current += line + "\n"
+        else:
+            if current:
+                chunks.append(current.strip())
+            current = line + "\n"
+    if current:
+        chunks.append(current.strip())
+    return chunks
+
+# TXT (use standard recursive splitter)
 def chunk_text(text):
     return splitter.split_text(text)
 
@@ -109,7 +140,15 @@ def ingest():
         # Delete old chunks before re-ingesting
         delete_by_source(filename)
         
-        chunks = chunk_text(text)
+        # Use file type aware chunking
+        suffix = Path(filepath).suffix.lower()
+        if suffix == ".csv":
+            chunks = chunk_csv(text)
+        elif suffix == ".pdf":
+            chunks = chunk_pdf(text)
+        else:
+            chunks = chunk_text(text)
+
         embeddings = embed(chunks)
 
 
@@ -128,7 +167,9 @@ def ingest():
             all_ids.append(doc_id)
             all_metadata.append({
                 "source": filename,
-                "chunk_id": i
+                "chunk_id": i,
+                "file_type": Path(filepath).suffix.lower().strip("."),
+                "char_count": len(chunk)
             })
     # Store in chromaDB    
     collection.upsert(

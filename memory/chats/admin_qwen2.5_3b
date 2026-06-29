@@ -1,19 +1,35 @@
 [
   {
     "role": "user",
-    "content": "what is the name of the company"
+    "content": "Who is the CTO?"
   },
   {
     "role": "assistant",
-    "content": "The name of the company is Nexora Technologies Pvt. Ltd. [2], [1]",
+    "content": "Based on the information provided, the CTO of Nexora Technologies Pvt. Ltd. is Daniel KC. [3]",
     "model": "qwen2.5:3b",
     "sources": [
-      "Dummy company policy.txt",
-      "Nexora_Corporate_Report_General.pdf",
-      "Nexora_Budget_Plan_2025.pdf"
+      "Nexora_HR_Employee_Table.pdf",
+      "Nexora_Corporate_Report_General.pdf"
     ],
     "grounded": true,
-    "confidence": 0.67,
+    "confidence": 0.65,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "what is his role?"
+  },
+  {
+    "role": "assistant",
+    "content": "Daniel KC's role at Nexora Technologies Pvt. Ltd. as mentioned in the provided context is CTO (Chief Technology Officer). [3]\n\nTo elaborate further, the context states that Daniel KC's current responsibilities include Cloud platform development and an AI roadmap. His completed tasks cover Microservices migration and DevOps pipeline implementation. Therefore, his primary role within the company can be deduced to be that of a technology leader responsible for developing and overseeing technological initiatives and strategies. [3]",
+    "model": "qwen2.5:3b",
+    "sources": [
+      "Nexora_Corporate_Report_General.pdf",
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.68,
     "tool_used": "rag_search",
     "attempts": 1
   }
