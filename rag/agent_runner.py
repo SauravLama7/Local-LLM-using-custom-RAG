@@ -80,7 +80,7 @@ Answer:""".strip()
     elif tool == "direct_answer":
         if status_callback:
             status_callback("💡 Generating direct answer...")
-        prompt = f"""You are a helpful assistant. Answer this question directly.
+        prompt = f"""You are a helpful assistant. Answer this question directly in english.
 
 Question: {query}
 

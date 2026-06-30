@@ -1,0 +1,62 @@
+[
+  {
+    "role": "user",
+    "content": "Summarize the coding standards"
+  },
+  {
+    "role": "assistant",
+    "content": "Here is a clear summary of Nexora Technologies Pvt. Ltd.’s **coding standards**, based on the provided context:\n\n---\n\n### **Purpose**\nThe document establishes coding standards to ensure consistency, maintainability, security, readability, and collaboration across all software development activities at Nexora [1].\n\n### **Scope**\nThese standards apply to:\n- Backend Development\n- Frontend Development\n- Full Stack Development\n- APIs\n- Mobile Applications\n- Internal Tools\n- Automation Scripts [2, 3]\n\n---\n\n### **General Principles**\nDevelopers should prioritize code that is:\n✔ **Readable** – Clear and understandable for others.\n✔ **Maintainable** – Easy to update or fix later.\n✔ **Secure** – Protects against vulnerabilities.\n✔ **Efficient** – Optimized for performance.\n✔ **Reusable** – Modular and reusable across projects.\n✔ **Well Documented** – Explains *why* decisions are made, not just *what* is done.\n\n*Avoid cleverness over clarity*—code should be straightforward [3].\n\n---\n\n### **Naming Conventions**\n- Use descriptive names for variables (e.g., `employeeCount`, `customerAddress`) to improve readability [4].\n\n---\n### **Formatting Standards**\n- **Indentation:** 4 spaces\n- **Encoding:** UTF-8\n- **Line Endings:** Unix (LF)\n- **Max Line Length:** 120 characters\n- **Statements per line:** One statement per line\n- **Trailing Whitespace:** Remove unnecessary whitespace [4].\n\n---\n### **Code Reviews**\nEvery Pull Request must:\n✅ Build successfully\n✅ Pass automated tests\n✅ Follow coding standards\n✅ Receive reviewer approval [2].\n\n---\n### **Comments & Error Handling**\n- **Comments** should explain *why* code behaves a certain way (e.g., *\"Cache results to reduce database load\"*), not just describe functionality.\n- Avoid vague comments like `Increment i`—focus on purpose, not syntax.\n\n---\n[1] Nexora Technologies Pvt. Ltd.’s official document (ENG-CS-001) defines the overarching purpose and scope of coding standards.\n[2] Section 15 specifies mandatory review criteria for Pull Requests.\n[3] General principles emphasize readability, maintainability, security, etc.\n[4] Formatting rules include indentation, line length, and encoding.",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_Coding_Standards_Dev.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.81,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "how should the documentation be done?"
+  },
+  {
+    "role": "assistant",
+    "content": "According to Nexora Technologies Pvt. Ltd.’s coding standards, **documentation** should follow these guidelines:\n\n### **Required Documentation for Major Features**\nFor every significant feature, developers must include the following in their documentation:\n\n1. **Purpose**: Explain *why* the feature exists and its intended functionality.\n   - Example: *\"This module automates payroll processing to reduce manual errors.\"*\n\n2. **Configuration**:\n   - Provide instructions on how to set up dependencies or environment variables.\n   - Example:\n     ```yaml\n     # Sample config for EmployeeService\n     database_url: \"postgres://user:pass@localhost/db\"\n     cache_enabled: true\n     ```\n\n3. **Dependencies**:\n   - List required libraries, frameworks, or external services.\n   - Example:\n     ```\n     Required packages:\n     - react (18.x)\n     - axios (latest)\n     ```\n\n4. **Architecture Overview**:\n   - Sketch a high-level diagram (text-based or pseudocode) showing how the feature integrates with other systems.\n   - Example:\n     ```\n     Flow: Employee → EmployeeService → Database → Invoice\n     ```\n\n5. **Deployment Notes**:\n   - Steps to deploy, rollback, or troubleshoot.\n   - Example:\n     ```bash\n     # Deploy steps:\n     1. Run `npm run build`\n     2. Update Docker image in CI/CD pipeline\n     3. Trigger blue-green deployment\n     ```\n\n---\n### **Additional Best Practices**\n- **Code Coverage**: Ensure documentation aligns with high test coverage (minimum **80%**).\n- **Contextual Comments**: Use comments to explain *why* logic exists (e.g., *\"Cache results to reduce database load\"*).\n- **Version Control**: Documentation should be versioned and approved by the **Development Department** (as per [3]).\n\n---\n### **Sources**\n[1] Section 17 explicitly outlines mandatory documentation for major features.\n[4] File organization principles (e.g., modularity) indirectly support structured documentation.\n\nWould you like examples of how to structure a specific type of documentation?",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_Coding_Standards_Dev.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.52,
+    "tool_used": "rag_search",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "thank you"
+  },
+  {
+    "role": "assistant",
+    "content": "¡De nada! 😊 ¿En qué más puedo ayudarte hoy?",
+    "model": "ministral-3:3b",
+    "sources": [],
+    "grounded": false,
+    "confidence": 0.0,
+    "tool_used": "direct_answer",
+    "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "thank you"
+  },
+  {
+    "role": "assistant",
+    "content": "You're very welcome! 😊 How can I assist you further today?",
+    "model": "ministral-3:3b",
+    "sources": [],
+    "grounded": false,
+    "confidence": 0.0,
+    "tool_used": "direct_answer",
+    "attempts": 1
+  }
+]

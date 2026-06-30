@@ -1,17 +1,17 @@
 [
   {
     "role": "user",
-    "content": "How many employee are in development depatrment"
+    "content": "how many employees are in development department?"
   },
   {
     "role": "assistant",
-    "content": "Based on the provided context, the **development department** includes employees from both the **Software Development Team** and the **Design Team** (as part of broader creative/technical roles).\n\nHere’s the breakdown:\n\n1. **Software Development Team** (explicitly labeled as \"Development\"):\n   - Anil Gurung – Senior Software Engineer\n   - Sara Khatri – Backend Developer\n   - Rajesh Lama – Frontend Developer\n   - Nisha Shrestha – Full Stack Developer\n   - Kevin Tamang – Junior Developer\n\n   **Total: 5 employees** [2].\n\n2. **Design Team** (technically part of creative/UX roles but often grouped with development in broader contexts):\n   - Maya Maharjan – UI/UX Designer\n   - Pratik Shrestha – Graphic Designer\n\n   *Note*: While these are not explicitly listed as \"development,\" they may be considered part of the **development department** if the company categorizes creative roles under technical teams (e.g., UX/UI designers collaborating closely with developers). If strictly counted, this would add 2 more employees.\n\n---\n### Clarification:\n- If only **Software Development Team members** are counted, there are **5 employees** [2].\n- If **Design Team + Software Dev Team** are included, the total is **7 employees** (5 + 2).\n\n**Source for strict count**: [2]. For broader interpretation, context suggests ambiguity. Confirm if the question refers to *only* developers or includes designers.\n\n---\nWould you like to refine the scope further?",
+    "content": "Based on the provided context, here is the breakdown of employees in the **Development** department:\n\n1. Anil Gurung – Senior Software Engineer [4]\n2. Sara Khatri – Backend Developer [4]\n3. Rajesh Lama – Frontend Developer [4]\n4. Nisha Shrestha – Full Stack Developer [4]\n5. Kevin Tamang – Junior Developer [4]\n\n**Total employees in the Development department: 5** [1, 2, 4].",
     "model": "ministral-3:3b",
     "sources": [
-      "Nexora_Corporate_Report_General.pdf"
+      "Nexora_HR_Employee_Table.pdf"
     ],
     "grounded": true,
-    "confidence": 0.6,
+    "confidence": 0.51,
     "tool_used": "rag_search",
     "attempts": 1
   }

@@ -337,7 +337,7 @@ if user_input:
                 allowed_sources=available_files if current_user["role"] != "admin" else None,
                 stream_callback=on_token,
                 image_bytes=uploaded_image,
-                status_callback=on_status  # ← added
+                status_callback=on_status  
             )
 
             # Clear status once done
