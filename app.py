@@ -29,21 +29,24 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Auth gate 
+# Auth gate
 init_db()  # ensure DB exists
 if "logged_in" not in st.session_state or not st.session_state.logged_in:
     show_login_page()
-    st.stop()  
+    st.stop()
 
 # Get current user info
 current_user = st.session_state.user
 is_guest     = st.session_state.is_guest
 
+# Guest query limit
+GUEST_QUERY_LIMIT = 10  # max queries per session
+
 # SIDEBAR
 with st.sidebar:
     st.title("⚙️ Settings")
 
-    # User info 
+    # User info
     st.markdown("### 👤 User")
     st.success(f"**{current_user['name']}**")
     st.caption(f"Role: `{current_user['role']}`")
@@ -52,7 +55,17 @@ with st.sidebar:
             del st.session_state[key]
         st.rerun()
 
-    # Admin Panel — only for admin role 
+    # Guest query limit indicator
+    if is_guest:
+        remaining = GUEST_QUERY_LIMIT - st.session_state.get("guest_query_count", 0)
+        if remaining > 3:
+            st.info(f"💬 {remaining} queries remaining this session.")
+        elif remaining > 0:
+            st.warning(f"⚠️ Only {remaining} queries remaining this session.")
+        else:
+            st.error("❌ Query limit reached. Please log in for unlimited access.")
+
+    # Admin Panel — only for admin role
     if current_user["role"] == "admin":
         st.markdown("### 🛠️ Admin Panel")
         with st.expander("👥 Manage Users"):
@@ -77,7 +90,7 @@ with st.sidebar:
 
             st.divider()
 
-            # View and delete users 
+            # View and delete users
             st.markdown("#### Current Users")
             from auth.db import get_all_users, delete_user
             users = get_all_users()
@@ -90,8 +103,8 @@ with st.sidebar:
                         delete_user(u["username"])
                         st.toast(f"Deleted {u['username']}")
                         st.rerun()
-            
-         # Audit viewer
+
+        # Audit viewer
         with st.expander("📋 Audit Log"):
             from auth.db import get_audit_log
             logs = get_audit_log(limit=50)
@@ -139,7 +152,7 @@ with st.sidebar:
             uploaded_image = uploaded_file.read()
             st.image(uploaded_image, caption="Image ready to send", use_container_width=True)
 
-    # Add Document Feature
+    # Add Document Feature — hidden for guests
     if not is_guest:
         st.markdown("### 📄 Add New Documents")
         doc_files = st.file_uploader(
@@ -191,13 +204,18 @@ with st.sidebar:
                 col1.caption(f"📄 {f.name}")
                 if not is_guest:
                     if col2.button("🗑️", key=f"del_{f.name}"):
+                        # Delete from disk
                         f.unlink()
+                        # Delete from chromaDB
                         from rag.vectordb import delete_by_source
                         delete_by_source(f.name)
+                        # Rebuild BM25
                         from rag.bm25_store import rebuild_bm25_without
                         rebuild_bm25_without(f.name)
+                        # Remove from hash store so re-adding works
                         from rag.hash_store import load_hashes, save_hashes
                         hashes = load_hashes()
+                        # Remove by filepath
                         updated = {k: v for k, v in hashes.items() if f.name not in k}
                         save_hashes(updated)
                         st.toast(f"Deleted {f.name}")
@@ -205,7 +223,7 @@ with st.sidebar:
         else:
             st.caption("No documents yet")
 
-    # Filter source — filtered by role 
+    # Filter source — filtered by role
     st.markdown("🔎 Filter Source")
     raw_path        = Path("data/raw")
     all_files       = [f.name for f in raw_path.glob("*")] if raw_path.exists() else []
@@ -213,10 +231,10 @@ with st.sidebar:
     selected_filter = st.multiselect(
         "Search within document",
         available_files,
-        placeholder = "Leave empty to search all documents"
+        placeholder="Leave empty to search all documents"
     )
     filter_source = selected_filter if selected_filter else None
-    
+
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
         st.session_state.pop("sources", None)
@@ -238,6 +256,10 @@ st.caption("Ask questions over your documents using local AI")
 # SESSION STATE
 if "messages" not in st.session_state:
     st.session_state.messages = [] if is_guest else load_chat(current_user["username"], selected_model)
+
+# Guest query count init 
+if is_guest and "guest_query_count" not in st.session_state:
+    st.session_state.guest_query_count = 0
 
 # Pre-warm model
 if "model_warmed" not in st.session_state or st.session_state.current_model != st.session_state.get("warmed_model"):
@@ -294,6 +316,17 @@ user_input = st.chat_input("Ask something about your documents...")
 # MAIN LOGIC
 if user_input:
 
+    # Check guest query limit 
+    if is_guest:
+        if st.session_state.guest_query_count >= GUEST_QUERY_LIMIT:
+            st.warning("❌ You've reached the guest query limit. Please log in for unlimited access.")
+            st.stop()
+        # ── Limit message length for guests
+        if len(user_input) > 500:
+            st.warning("⚠️ Message too long. Guest queries are limited to 500 characters.")
+            st.stop()
+        st.session_state.guest_query_count += 1
+
     # Build user message — attach image if one was uploaded
     user_msg = {"role": "user", "content": user_input}
     if uploaded_image:
@@ -337,7 +370,7 @@ if user_input:
                 allowed_sources=available_files if current_user["role"] != "admin" else None,
                 stream_callback=on_token,
                 image_bytes=uploaded_image,
-                status_callback=on_status  
+                status_callback=on_status
             )
 
             # Clear status once done
@@ -357,6 +390,7 @@ if user_input:
                 label += f" (retried {attempts - 1}x)"
             st.caption(label)
 
+            # Hallucination check — only for rag_search
             if tool_used == "rag_search" and context_chunks:
                 result = check_hallucination(full_response, context_chunks)
                 if not result["grounded"]:
@@ -377,6 +411,7 @@ if user_input:
                     model=selected_model
                 )
 
+            # Render Citations
             if sources:
                 citation_md = " ".join([f"`📄 {src}`" for src in sources])
                 st.markdown(f"**Sources:** {citation_md}")
@@ -384,7 +419,7 @@ if user_input:
         except Exception as e:
             full_response = f"❌ Error: {str(e)}"
             placeholder.error(full_response)
-            
+
     # Save assistant message
     st.session_state.messages.append({
         "role":       "assistant",

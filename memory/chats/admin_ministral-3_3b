@@ -14,5 +14,22 @@
     "confidence": 0.51,
     "tool_used": "rag_search",
     "attempts": 1
+  },
+  {
+    "role": "user",
+    "content": "What is Rajesh lama currently working on?"
+  },
+  {
+    "role": "assistant",
+    "content": "Based on the provided context, here’s what **Rajesh Lama** (Frontend Developer) is currently working on:\n\n- **\"Page 1\"** of the relevant section does not explicitly list his current projects.\nHowever, from **[4]**, it appears that the **Development team’s current focus** is not detailed per individual beyond general departmental tasks.\n\nSince Rajesh Lama’s specific current work isn’t directly mentioned in the provided context (only general team activities or other employees’ roles), I cannot provide a precise answer about what he is working on at this time [1, 2].\n\nIf you need further clarification, let me know if there are additional details from another source!",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_Corporate_Report_General.pdf",
+      "Nexora_HR_Employee_Table.pdf"
+    ],
+    "grounded": true,
+    "confidence": 0.53,
+    "tool_used": "rag_search",
+    "attempts": 1
   }
 ]
