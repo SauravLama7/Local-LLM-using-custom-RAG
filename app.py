@@ -107,7 +107,19 @@ with st.sidebar:
         # Audit viewer
         with st.expander("📋 Audit Log"):
             from auth.db import get_audit_log
-            logs = get_audit_log(limit=50)
+
+            col1, col2 = st.columns([1, 1])
+            with col1:
+                log_limit = st.slider("Show last N entires", 10, 500, 50, step = 10)
+            with col2:
+                all_users = ["All Users"] + [u["username"] for u in get_all_users()]
+                filter_user = st.selectbox("Filter by user", all_users, key = "audit_user_filter")
+
+            logs = get_audit_log(limit=log_limit)
+
+            if filter_user != "All Users":
+                logs = [l for l in logs if l["username"] == filter_user]
+                
             if logs:
                 for entry in logs:
                     grounded_icon = "✅" if entry["grounded"] else "⚠️"

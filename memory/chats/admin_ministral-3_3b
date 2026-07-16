@@ -1,34 +1,17 @@
 [
   {
     "role": "user",
-    "content": "how many employees are in development department?"
+    "content": "list out the Financial Summary(2026)"
   },
   {
     "role": "assistant",
-    "content": "Based on the provided context, here is the breakdown of employees in the **Development** department:\n\n1. Anil Gurung – Senior Software Engineer [4]\n2. Sara Khatri – Backend Developer [4]\n3. Rajesh Lama – Frontend Developer [4]\n4. Nisha Shrestha – Full Stack Developer [4]\n5. Kevin Tamang – Junior Developer [4]\n\n**Total employees in the Development department: 5** [1, 2, 4].",
+    "content": "Here is the **Financial Summary for Nexora Technologies Pvt. Ltd. in 2026** based on the provided context:\n\n### **Total Revenue (2026)**\n- **Software Development Projects:** 35,000,000 NPR [1]\n- **SaaS / Product Revenue:** 10,000,000 NPR [1]\n- **Maintenance Contracts:** 5,000,000 NPR [1]\n- **Consulting Services:** 3,000,000 NPR [1]\n**Total Revenue = 53,000,000 NPR** [2]\n\n---\n\n### **Total Expenses (2026)**\n\n#### **A. HR & Payroll**\n- **Executive Team:** 10,800,000 NPR [1]\n- **Maintenance:** 350,000 NPR [2]\n- **Snacks & Food:** 450,000 NPR [2]\n- **Transportation:** 500,000 NPR [2]\n**Total HR & Payroll = 11,780,000 NPR** [3]\n\n#### **B. Operations**\n- **Annual Cost (NPR):** 4,650,000 NPR [1]\n\n#### **C. Technology Infrastructure**\n- **Cloud Servers:** 1,500,000 NPR [1]\n- **SaaS Tools:** 700,000 NPR [1]\n- **Security Systems:** 500,000 NPR [1]\n- **Backup Systems:** 300,000 NPR [1]\n- **Hardware & Devices:** 2,500,000 NPR [1]\n- **Software Licenses:** 600,000 NPR [1]\n**Total Technology = 6,100,000 NPR** [4]\n\n#### **D. Marketing**\n- **Paid Ads:** 1,000,000 NPR [1]\n- **Website & Branding:** 350,000 NPR [1]\n- **Events & Sponsorships:** 500,000 NPR [1]\n- **Content Marketing:** 400,000 NPR [1]\n- **Client Acquisition:** 600,000 NPR [1]\n**Total Marketing = 2,850,000 NPR** [1]\n\n#### **E. Legal & Compliance**\n- **Legal Services:** 500,000 NPR [1]\n- **Accounting & Audit:** 700,000 NPR [1]\n- **Taxes & Fees:** 1,000,000 NPR [1]\n- **Insurance:**",
     "model": "ministral-3:3b",
     "sources": [
-      "Nexora_HR_Employee_Table.pdf"
+      "Nexora_Budget_Plan_2026.pdf"
     ],
     "grounded": true,
-    "confidence": 0.51,
-    "tool_used": "rag_search",
-    "attempts": 1
-  },
-  {
-    "role": "user",
-    "content": "What is Rajesh lama currently working on?"
-  },
-  {
-    "role": "assistant",
-    "content": "Based on the provided context, here’s what **Rajesh Lama** (Frontend Developer) is currently working on:\n\n- **\"Page 1\"** of the relevant section does not explicitly list his current projects.\nHowever, from **[4]**, it appears that the **Development team’s current focus** is not detailed per individual beyond general departmental tasks.\n\nSince Rajesh Lama’s specific current work isn’t directly mentioned in the provided context (only general team activities or other employees’ roles), I cannot provide a precise answer about what he is working on at this time [1, 2].\n\nIf you need further clarification, let me know if there are additional details from another source!",
-    "model": "ministral-3:3b",
-    "sources": [
-      "Nexora_Corporate_Report_General.pdf",
-      "Nexora_HR_Employee_Table.pdf"
-    ],
-    "grounded": true,
-    "confidence": 0.53,
+    "confidence": 0.76,
     "tool_used": "rag_search",
     "attempts": 1
   }
