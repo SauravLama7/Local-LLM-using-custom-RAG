@@ -110,13 +110,13 @@ with st.sidebar:
     st.title("⚙️ Settings")
 
     # User info
-    st.markdown("### 👤 User")
-    st.success(f"**{current_user['name']}**")
-    st.caption(f"Role: `{current_user['role']}`")
-    if st.button("🚪 Logout"):
+    st.markdown("### 👤 User Profile")
+    st.info(f"**{current_user['name']}**\n\n🔑 Role: `{current_user['role']}`")
+    if st.button("🚪 Logout", use_container_width=True):
         for key in list(st.session_state.keys()):
-            del st.session_state[key]
+           del st.session_state[key]
         st.rerun()
+
 
     # Guest query limit indicator
     if is_guest:
@@ -199,11 +199,101 @@ with st.sidebar:
             else:
                 st.caption("No queries logged yet.")
 
-    st.markdown("### Model Info")
+    st.markdown("### 🚀 Model Info")
     st.info("qwen2.5:3b and ministral-3:3b are the two models available. ministral-3:3b also supports vision")
 
     MODEL_OPTIONS = ["qwen2.5:3b", "ministral-3:3b"]
     selected_model = st.sidebar.selectbox("Choose Model", MODEL_OPTIONS)
+
+    # Dynamic model themes
+    MODEL_THEMES = {
+        "qwen2.5:3b": {
+            "primary": "#10a37f",
+            "secondary": "#d1fae5",
+            "emoji": "🤖",
+            "name": "Qwen AI"
+        },
+        "ministral-3:3b": {
+            "primary": "#f97316",
+            "secondary": "#ffedd5",
+            "emoji": "👁️",
+            "name": "Ministral Vision"
+        }
+    }
+
+    theme = MODEL_THEMES[selected_model]
+
+    st.markdown(f"""
+    <style>
+
+    [data-testid="stSidebar"] {{
+        background: linear-gradient(
+            180deg,
+            {theme['secondary']} 0%,
+            #ffffff 35%
+        );
+    }}
+
+    .model-card {{
+        background: linear-gradient(
+            135deg,
+            {theme['primary']},
+            #111827
+        );
+        padding: 18px;
+        border-radius: 18px;
+        color:white;
+        text-align:center;
+        box-shadow:0 8px 20px rgba(0,0,0,0.18);
+        margin:10px 0 20px 0;
+    }}
+
+    .model-icon {{
+        font-size:40px;
+    }}
+
+    .model-title {{
+        font-size:22px;
+        font-weight:800;
+    }}
+
+    .model-subtitle {{
+        font-size:13px;
+        opacity:0.85;
+    }}
+
+    .stButton>button {{
+        border-radius:12px;
+        border:1px solid {theme['primary']};
+        transition:0.3s;
+    }}
+
+    .stButton>button:hover {{
+        background:{theme['primary']};
+        color:white;
+        transform:scale(1.02);
+    }}
+
+    div[data-testid="stChatMessage"] {{
+        border-left:5px solid {theme['primary']};
+    }}
+
+    </style>
+    """, unsafe_allow_html=True)
+
+
+    # Model Card
+    st.sidebar.markdown(
+        f"""
+        <div class="model-card">
+            <div class="model-icon">{theme['emoji']}</div>
+            <div class="model-title">{theme['name']}</div>
+            <div class="model-subtitle">{selected_model}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
     # Switch chats when switching model
     if "current_model" not in st.session_state:
