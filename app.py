@@ -18,16 +18,79 @@ st.set_page_config(
 )
 
 st.markdown("""
-    <style>
-        section.main > div {
-        padding-bottom: 10px;
-        }
-        .stChatFloatingInputContainer{
-        position: fixed;
-         bottom: 0;
-        }
-    </style>
+<style>
+
+.block-container{
+    padding-top:1.5rem;
+    padding-bottom:6rem;
+    max-width:1200px;
+}
+
+[data-testid="stChatInput"]{
+    max-width:1100px;
+    margin:auto;
+}
+
+[data-testid="stSidebar"]{
+    background:#f8fafc;
+}
+
+[data-testid="stSidebar"] h3{
+    color:#000000;
+}
+
+div[data-testid="stChatMessage"]{
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:12px;
+    border:1px solid #ececec;
+}
+
+div[data-testid="stChatMessage"]:hover{
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+}
+
+.stButton>button{
+    width:100%;
+    border-radius:10px;
+    height:42px;
+    font-weight:600;
+}
+
+.stDownloadButton>button{
+    border-radius:10px;
+}
+
+.stFileUploader{
+    border-radius:12px;
+}
+
+hr{
+    margin-top:20px;
+    margin-bottom:20px;
+}
+
+.chat-header{
+    font-size:32px;
+    font-weight:700;
+    color:#1e3a8a;
+}
+
+.subtitle{
+    color:#64748b;
+    margin-bottom:20px;
+}
+
+.metric-card{
+    padding:15px;
+    border-radius:10px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+}
+
+</style>
 """, unsafe_allow_html=True)
+
 
 # Auth gate
 init_db()  # ensure DB exists
@@ -110,7 +173,7 @@ with st.sidebar:
 
             col1, col2 = st.columns([1, 1])
             with col1:
-                log_limit = st.slider("Show last N entires", 10, 500, 50, step = 10)
+                log_limit = st.slider("Show last N entires", 10, 500, 20, step = 10)
             with col2:
                 all_users = ["All Users"] + [u["username"] for u in get_all_users()]
                 filter_user = st.selectbox("Filter by user", all_users, key = "audit_user_filter")
@@ -207,33 +270,34 @@ with st.sidebar:
                     st.info(f"⏭️ Already exists: {', '.join(skipped)}")
 
     st.markdown("### 🗂️ Knowledge Base")
-    raw_path = Path("data/raw")
-    if raw_path.exists():
-        files = list(raw_path.glob("*"))
-        if files:
-            for f in files:
-                col1, col2 = st.columns([3, 1])
-                col1.caption(f"📄 {f.name}")
-                if not is_guest:
-                    if col2.button("🗑️", key=f"del_{f.name}"):
-                        # Delete from disk
-                        f.unlink()
-                        # Delete from chromaDB
-                        from rag.vectordb import delete_by_source
-                        delete_by_source(f.name)
-                        # Rebuild BM25
-                        from rag.bm25_store import rebuild_bm25_without
-                        rebuild_bm25_without(f.name)
-                        # Remove from hash store so re-adding works
-                        from rag.hash_store import load_hashes, save_hashes
-                        hashes = load_hashes()
-                        # Remove by filepath
-                        updated = {k: v for k, v in hashes.items() if f.name not in k}
-                        save_hashes(updated)
-                        st.toast(f"Deleted {f.name}")
-                        st.rerun()
-        else:
-            st.caption("No documents yet")
+    with st.expander("📚 View Documents", expanded = False):
+        raw_path = Path("data/raw")
+        if raw_path.exists():
+            files = list(raw_path.glob("*"))
+            if files:
+                for f in files:
+                    col1, col2 = st.columns([3, 1])
+                    col1.caption(f"📄 {f.name}")
+                    if not is_guest:
+                        if col2.button("🗑️", key=f"del_{f.name}"):
+                            # Delete from disk
+                            f.unlink()
+                            # Delete from chromaDB
+                            from rag.vectordb import delete_by_source
+                            delete_by_source(f.name)
+                            # Rebuild BM25
+                            from rag.bm25_store import rebuild_bm25_without
+                            rebuild_bm25_without(f.name)
+                            # Remove from hash store so re-adding works
+                            from rag.hash_store import load_hashes, save_hashes
+                            hashes = load_hashes()
+                            # Remove by filepath
+                            updated = {k: v for k, v in hashes.items() if f.name not in k}
+                            save_hashes(updated)
+                            st.toast(f"Deleted {f.name}")
+                            st.rerun()
+            else:
+                st.caption("No documents yet")
 
     # Filter source — filtered by role
     st.markdown("🔎 Filter Source")
@@ -314,7 +378,9 @@ def render_message(msg):
         # Show citations if present
         if msg.get("sources"):
             citation_md = " ".join([f"`📄 {src}`" for src in msg["sources"]])
-            st.markdown(f"**Sources:** {citation_md}")
+            with st.expander("📄 Sources"):
+                st.markdown(citation_md)
+
 
 
 # DISPLAY CHAT HISTORY
