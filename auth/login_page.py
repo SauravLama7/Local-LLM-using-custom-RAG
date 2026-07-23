@@ -38,7 +38,18 @@ def show_login_page():
 
         # Guest tab
         with tab2:
-            st.info("Continue without logging in. Chat won't be saved.")
+            st.info(
+                """
+                Continue without logging in.
+
+                - Chat won't be saved.
+                - Limited query.
+                - Limited document access.
+                - Cannot add or remove documents.
+                
+                """
+            )
+
             if st.button("Continue as Guest", use_container_width=True):
                 st.session_state.logged_in = True
                 st.session_state.user      = {"username": "guest", "role": "guest", "name": "Guest"}
