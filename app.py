@@ -8,6 +8,7 @@ from rag.agent_runner import run_agent
 from rag.llm import VISION_MODELS
 from memory.chat_store import load_chat, save_chat
 from rag.hallucination_guard import check_hallucination
+from rag.citation_renderer import render_citations
 
 
 # PAGE CONFIG
@@ -466,10 +467,12 @@ def render_message(msg):
                 st.warning(f"⚠️ Low confidence ({msg['confidence']}) — answer may not be grounded in your documents.")
 
         # Show citations if present
-        if msg.get("sources"):
-            citation_md = " ".join([f"`📄 {src}`" for src in msg["sources"]])
-            with st.expander("📄 Sources"):
-                st.markdown(citation_md)
+        if msg.get("sources") or msg.get("indexed_chunks"):
+            render_citations(
+                msg.get("content", ""),
+                msg.get("indexed_chunks", {}),
+                msg.get("sources", [])
+            )
 
 
 
@@ -514,6 +517,7 @@ if user_input:
         placeholder    = st.empty()
         full_response  = ""
         sources        = []
+        indexed_chunks = {}
         context_chunks = []
         tool_used      = "rag_search"
         attempts       = 1
@@ -530,7 +534,7 @@ if user_input:
             def on_status(msg):
                 status_placeholder.caption(f"⏳ {msg}")
 
-            full_response, sources, context_chunks, tool_used, attempts, was_streamed = run_agent(
+            full_response, sources, context_chunks, indexed_chunks, tool_used, attempts, was_streamed = run_agent(
                 query=user_input,
                 model=selected_model,
                 history=st.session_state.messages,
@@ -580,9 +584,9 @@ if user_input:
                 )
 
             # Render Citations
-            if sources:
-                citation_md = " ".join([f"`📄 {src}`" for src in sources])
-                st.markdown(f"**Sources:** {citation_md}")
+            if sources or indexed_chunks:
+                render_citations(full_response, indexed_chunks, sources)
+        
 
         except Exception as e:
             full_response = f"❌ Error: {str(e)}"
@@ -594,6 +598,7 @@ if user_input:
         "content":    full_response,
         "model":      selected_model,
         "sources":    sources,
+        "indexed_chunks": indexed_chunks,
         "grounded":   result["grounded"],
         "confidence": result["score"],
         "tool_used":  tool_used,

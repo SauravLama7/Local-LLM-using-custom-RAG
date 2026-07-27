@@ -19,7 +19,7 @@ def build_prompt(query, context, system_prompt, history = None):
     if history:
         for msg in history:
             role = msg["role"]
-            content = msg["content"]
+            content = msg["content"][:500]
             chat_history += f"{role.upper()}:{content}\n"
 
     return f"""
@@ -45,12 +45,22 @@ def get_prompt(query, model = "default", history = None, filter_source = None, a
     sources = []
     context_chunks = []
 
+    # Indexed chunks for citation preview
+    indexed_chunks = {}
+
     for i,r in enumerate(results, start = 1):
         text = r["text"]
         source = r["metadata"].get("source", "unknown")
 
         context_parts.append(f"[{i}] {text}")
         context_chunks.append(text)
+
+        # Store indexed chunk for citation preview
+        indexed_chunks[i] = {
+            "text":  text,
+            "source": source,
+            "index": i
+        }
 
         # Duplicate sources
         if source not in sources:
@@ -71,4 +81,4 @@ def get_prompt(query, model = "default", history = None, filter_source = None, a
     print(f"📊 Usage: {usage_pct}%")
 
 
-    return prompt, sources, context_chunks
+    return prompt, sources, context_chunks, indexed_chunks

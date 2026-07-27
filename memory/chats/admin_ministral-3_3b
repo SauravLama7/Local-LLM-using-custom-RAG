@@ -1,18 +1,1 @@
-[
-  {
-    "role": "user",
-    "content": "Explain termination policy with example"
-  },
-  {
-    "role": "assistant",
-    "content": "The **termination policy** at **Nexora Technologies Pvt. Ltd.** outlines the conditions under which employment may be terminated. Below is a detailed explanation based on the provided context:\n\n---\n\n### **Key Conditions for Termination**\n1. **Repeated Policy Violations**\n   - If an employee consistently breaches company policies (e.g., misusing company resources, violating ethical standards), repeated infractions can lead to termination.\n   *Example*: An employee repeatedly logs into work emails from unauthorized devices and is caught doing so three times in six months. Despite warnings, the behavior persists, triggering disciplinary action culminating in termination.\n\n2. **Poor Performance Despite Warnings**\n   - If an employee fails to meet productivity or goal benchmarks despite receiving improvement plans (after warnings), their employment may be terminated.\n   *Example*: A software developer consistently misses deadlines due to lack of focus. After two performance reviews with a \"Needs Improvement\" rating and a formal improvement plan, the company terminates their contract after six months of continued underperformance.\n\n3. **Breach of Confidentiality Agreement**\n   - Disclosing sensitive company information (e.g., trade secrets, client data) violates confidentiality agreements and can result in termination.\n   *Example*: An employee accidentally leaks proprietary project plans to a competitor. Despite internal investigations and warnings, the breach is confirmed, leading to immediate termination.\n\n4. **Voluntary Resignation with Minimum Notice**\n   - Employees must provide at least **two weeks’ notice** before resigning voluntarily. Failure to comply may be treated as a policy violation.\n   *Example*: An employee quits abruptly after one week without notice. The company interprets this as a breach of the resignation policy and does not process their exit benefits.\n\n---\n### **Additional Notes**\n- **Disciplinary Action**: Violations can lead to warnings, suspensions, or termination before full dismissal [2].\n- **No Cause for Termination**: Resignation (with proper notice) is the only voluntary reason; involuntary termination requires one of the above conditions.\n- **Amendments**: The policy may change without prior notice, so employees must stay updated via official channels [10].\n\n---\n**Sources Cited**:\n[2] – Defines violations as grounds for termination.\n[3] – Lists explicit termination triggers (e.g., poor performance, breach of confidentiality).\n[9] – Contextualizes termination as a formal policy action.",
-    "model": "ministral-3:3b",
-    "sources": [
-      "Dummy company policy.txt"
-    ],
-    "grounded": true,
-    "confidence": 0.72,
-    "tool_used": "rag_search",
-    "attempts": 1
-  }
-]
+[]

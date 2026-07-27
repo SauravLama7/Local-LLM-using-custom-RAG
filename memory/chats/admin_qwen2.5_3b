@@ -1,18 +1,1 @@
-[
-  {
-    "role": "user",
-    "content": "Explain termination policy with example"
-  },
-  {
-    "role": "assistant",
-    "content": "The termination policy for Nexora Technologies Pvt. Ltd. is outlined in point [2] of the provided context:\n\n**Termination Policy:** All employees are required to follow the guidelines stated herein. Violation of these policies may result in disciplinary action, including termination.\n\nThis policy gives a clear indication that any violation of established rules or company guidelines can lead to termination. To illustrate this with an example:\n\nLet's say an employee repeatedly violates the confidentiality agreement (point [3] in context). Despite warnings and repeated violations over several months, management decides that continuing employment would no longer be safe or ethical for the organization. This decision could result in termination.\n\nAnother possible scenario under point [3] is a situation where an employee's performance consistently fails to meet the required standards despite receiving multiple improvement plans (point [3]). Given these conditions, the company may decide it needs to terminate the employment of this employee to protect its interests and maintain operational efficiency.\n\nIn conclusion, violations such as breaches in confidentiality agreements or consistent poor performance without corrective action can lead to termination under Nexora Technologies' policies.",
-    "model": "qwen2.5:3b",
-    "sources": [
-      "Dummy company policy.txt"
-    ],
-    "grounded": true,
-    "confidence": 0.78,
-    "tool_used": "rag_search",
-    "attempts": 1
-  }
-]
+[]

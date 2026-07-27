@@ -58,7 +58,7 @@ Answer:""".strip()
             full_response = "I was unable to analyze the image. Please try again."
             if stream_callback:
                 stream_callback(full_response)
-        return full_response, [], [], "direct_answer", 1, True
+        return full_response, [], [], {}, "direct_answer", 1, True
 
     # Step 1: Decide which tool to use
     if status_callback:
@@ -75,7 +75,7 @@ Answer:""".strip()
         clarify_question = decision.get("question", "Could you clarify your question?")
         if stream_callback:
             stream_callback(clarify_question)
-        return clarify_question, [], [], "clarify", 1, True
+        return clarify_question, [], [], {}, "clarify", 1, True
 
     elif tool == "direct_answer":
         if status_callback:
@@ -90,7 +90,7 @@ Answer:""".strip()
             full_response += token
             if stream_callback:
                 stream_callback(token)
-        return full_response, [], [], "direct_answer", 1, True
+        return full_response, [], [], {}, "direct_answer", 1, True
 
     # RAG search with self-correction loop
     current_query = query
@@ -108,7 +108,7 @@ Answer:""".strip()
         # Get prompt + context
         if status_callback:
             status_callback("🔍 Searching documents...")
-        prompt, sources, context_chunks = get_prompt(
+        prompt, sources, context_chunks, indexed_chunks = get_prompt(
             query=current_query,
             model=model,
             history=history,
@@ -147,7 +147,7 @@ Answer:""".strip()
             best_response = full_response
             best_sources  = sources
             best_chunks   = context_chunks
-
+            best_indexed = indexed_chunks
         # If grounded enough, stop retrying
         if result["grounded"]:
             print(f"✅ Good answer on attempt {attempts}")
@@ -159,4 +159,4 @@ Answer:""".strip()
             current_query = rephrase_query(current_query, model)
 
     # was_streamed only True if the BEST response came from the streamed first attempt
-    return best_response, best_sources, best_chunks, "rag_search", attempts, was_streamed and attempts == 1
+    return best_response, best_sources, best_chunks, best_indexed, "rag_search", attempts, was_streamed and attempts == 1
