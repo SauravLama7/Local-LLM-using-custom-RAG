@@ -24,7 +24,8 @@ Rephrased:""",
         rephrased = response.json().get("response", "").strip()
         print(f"🔄 Rephrased query: {rephrased}")
         return rephrased if rephrased else query
-    except:
+    except Exception as e:
+        print(e)
         return query  # fallback to original
 
 
@@ -97,6 +98,7 @@ Answer:""".strip()
     best_response = None
     best_sources  = []
     best_chunks   = []
+    best_indexed = {}
     best_score    = -1
     attempts      = 0
     was_streamed  = False
@@ -148,6 +150,7 @@ Answer:""".strip()
             best_sources  = sources
             best_chunks   = context_chunks
             best_indexed = indexed_chunks
+
         # If grounded enough, stop retrying
         if result["grounded"]:
             print(f"✅ Good answer on attempt {attempts}")
