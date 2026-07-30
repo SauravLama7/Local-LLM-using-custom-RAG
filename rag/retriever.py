@@ -40,6 +40,7 @@ def retrieve_docs(query, k=7, rerank_k=4, filter_source=None, allowed_sources=No
 
     vector_docs = results["documents"][0]
     metadatas   = results["metadatas"][0]
+
     meta_lookup = {doc: meta for doc, meta in zip(vector_docs, metadatas)}
 
     # BM25 metadata to meta_lookup for unknown source
@@ -73,6 +74,18 @@ def retrieve_docs(query, k=7, rerank_k=4, filter_source=None, allowed_sources=No
         documents=fused_docs,
         top_k=rerank_k
     )
+
+    # Final chunks sent to llm
+    """
+    print("\n=== FINAL RERANKED CHUNKS ===")
+    for i, doc in enumerate(reranked_docs, 1):
+        meta = meta_lookup.get(doc, {})
+        print(f"\nRank {i}")
+        print(f"Source: {meta.get('source')}")
+        print(f"Chunk: {meta.get('chunk_id')}")
+        print(doc[:500])
+        print("=" * 80)
+    """
 
     return [
         {"text": doc, "metadata": meta_lookup.get(doc, {"source": "unknown", "chunk_id": 0})}

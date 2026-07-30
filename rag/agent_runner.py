@@ -1,9 +1,10 @@
+import json
+import requests
 from rag.agent import decide_tool
 from rag.rag_chain import get_prompt
 from rag.llm import generate
 from rag.hallucination_guard import check_hallucination
-import requests
-import json
+
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
 

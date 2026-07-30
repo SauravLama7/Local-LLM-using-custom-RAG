@@ -1,1 +1,40 @@
-[]
+[
+  {
+    "role": "user",
+    "content": "Summarize the document"
+  },
+  {
+    "role": "assistant",
+    "content": "Here is a concise summary of **Nexora Technologies Pvt. Ltd.’s Annual Budget Plan for 2026**, based on the provided context:\n\n---\n\n### **1. Employee Structure (2026)**\n- Total employees: **20** across departments:\n  - Executive: **3**\n  - Operations, HR, Finance: **1 each**\n  - Development: **5**\n  - Design & QA: **2 each**\n  - IT: **2**\n  - Sales & Marketing: **3**\n\n---\n\n### **2. Estimated Revenue (2026)**\n- **Total revenue**: **NPR 53,000,000** from:\n  - Software Development Projects: **NPR 35,000,000**\n  - SaaS/Product Revenue: **NPR 10,000,000**\n  - Maintenance Contracts: **NPR 5,000,000**\n  - Consulting Services: **NPR 3,000,000**\n\n---\n\n### **3. Key Expenses Breakdown (2026)**\n#### **A. HR & Payroll**\n- Total cost: **NPR 38,860,000** (largest expense category).\n  - Executive Team: **NPR 10,800,000** ([1], [4]).\n\n#### **B. Marketing & Growth**\n- Total marketing spend: **NPR 2,850,000**.\n  - Subcategories:\n    - Paid Ads: **NPR 1,000,000**\n    - Website/Branding: **NPR 350,000**\n    - Events/Sponsorships: **NPR 500,000**\n    - Content Marketing: **NPR 400,000**\n    - Client Acquisition: **NPR 600,000** ([2]).\n\n#### **C. Technology Infrastructure**\n- Total tech spend: **NPR 6,100,000**.\n  - Key items:\n    - Cloud Servers: **NPR 1,500,000**\n    - Hardware/Devices: **NPR 2,500,000** ([3]).\n\n#### **D. Operations & Compliance**\n- **Operations**: **NPR 4,650,000** (includes maintenance, snacks, transportation).\n- **Legal & Compliance**:\n  - Total legal costs: **NPR 2,600,000**.\n    - Taxes/Fees: **NPR 1,000,000** ([2]).\n\n---\n### **4. Financial Highlights (2026)**\n- **HR & Payroll dominates expenses** (~73% of total costs).\n- **Revenue growth prioritized** via software projects and SaaS.\n- **Tech investment** focuses on scalable cloud/hardware solutions.\n\n---\n**[Sources used directly for the summary: [1], [2], [3], [4].]**",
+    "model": "ministral-3:3b",
+    "sources": [
+      "Nexora_Budget_Plan_2026.pdf"
+    ],
+    "indexed_chunks": {
+      "1": {
+        "text": "Nexora Technologies Pvt. Ltd.\nAnnual Budget Plan - 2026\nThis document contains the estimated annual budget plan for Nexora Technologies Pvt. Ltd. based on current\norganizational structure, operational expenses, payroll estimates, technology infrastructure, and projected business\ngrowth.\n1. Employee Structure(2026)\nDepartment\nEmployees\nExecutive\n3\nOperations\n1\nHR\n1\nFinance\n1\nDevelopment\n5\nDesign\n2\nQA\n2\nIT\n2\nSales & Marketing\n3\nTotal\n20\n2. Estimated Revenue(2026)\nRevenue Source\nAnnual Amount (NPR)",
+        "source": "Nexora_Budget_Plan_2026.pdf",
+        "index": 1
+      },
+      "2": {
+        "text": "Expense\nAnnual Cost (NPR)\nPaid Ads\n1,000,000\nWebsite & Branding\n350,000\nEvents & Sponsorships\n500,000\nContent Marketing\n400,000\nClient Acquisition\n600,000\nTotal Marketing\n2,850,000\n7. Legal & Compliance(2026)\nExpense\nAnnual Cost (NPR)\nLegal Services\n500,000\nAccounting & Audit\n700,000\nTaxes & Fees\n1,000,000\nInsurance\n400,000\nTotal Legal\n2,600,000\n8. Financial Summary(2026)\nCategory\nAnnual Cost (NPR)\nHR & Payroll\n38,860,000\nOperations\n4,650,000\nTechnology\n6,100,000\nMarketing\n2,850,000",
+        "source": "Nexora_Budget_Plan_2026.pdf",
+        "index": 2
+      },
+      "3": {
+        "text": "250,000\nMaintenance\n350,000\nSnacks & Food\n450,000\nTransportation\n500,000\nTotal Operations\n4,650,000\n5. Technology Infrastructure(2026)\nExpense\nAnnual Cost (NPR)\nCloud Servers\n1,500,000\nSaaS Tools\n700,000\nSecurity Systems\n500,000\nBackup Systems\n300,000\nHardware & Devices\n2,500,000\nSoftware Licenses\n600,000\nTotal Technology\n6,100,000\n6. Marketing & Growth(2026)",
+        "source": "Nexora_Budget_Plan_2026.pdf",
+        "index": 3
+      },
+      "4": {
+        "text": "2\nIT\n2\nSales & Marketing\n3\nTotal\n20\n2. Estimated Revenue(2026)\nRevenue Source\nAnnual Amount (NPR)\nSoftware Development Projects\n35,000,000\nSaaS / Product Revenue\n10,000,000\nMaintenance Contracts\n5,000,000\nConsulting Services\n3,000,000\nTotal Revenue\n53,000,000\n3. HR & Payroll Budget(2026)\nCategory\nAnnual Cost (NPR)\nExecutive Team\n10,800,000",
+        "source": "Nexora_Budget_Plan_2026.pdf",
+        "index": 4
+      }
+    },
+    "grounded": true,
+    "confidence": 0.8,
+    "tool_used": "rag_search",
+    "attempts": 1
+  }
+]

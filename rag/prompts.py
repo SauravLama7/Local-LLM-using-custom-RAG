@@ -16,8 +16,5 @@ Explain answers clearly with reasoning when needed.
 After each fact or sentence cite the source using [1], [2] etc matching the context numbers but only cite sources that directly answer the question.
 If a retrieved chunk is about a different topic, ignore it.
 
-List the context with number used to cite at the end of all the answers
-
-
 """
 }
