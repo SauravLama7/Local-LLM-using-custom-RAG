@@ -1,6 +1,7 @@
 from pathlib import Path
 import fitz
 import csv
+from docx import Document
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from rag.embedding import embed
@@ -24,6 +25,24 @@ def read_pdf(file_path):
         if page_text:
             text += page_text + "\n"
 
+    return text
+
+# DOCX Reader
+def read_docx(file_path):
+    """Extract text from Word document preserving paragraph structure."""
+    doc  = Document(file_path)
+    text = ""
+    for para in doc.paragraphs:
+        if para.text.strip():
+            text += para.text + "\n"
+    # Also extract text from tables
+    for table in doc.tables:
+        for row in table.rows:
+            row_text = " | ".join(
+                cell.text.strip() for cell in row.cells if cell.text.strip()
+            )
+            if row_text:
+                text += row_text + "\n"
     return text
 
 # CSV Reader
@@ -55,6 +74,10 @@ def load_files(path):
         
         elif suffix == ".csv":
             text = read_csv(file)
+            texts.append((file.name, text, str(file)))
+
+        elif suffix == ".docx":
+            text = read_docx(file)
             texts.append((file.name, text, str(file)))
 
     return texts
@@ -147,6 +170,7 @@ def ingest():
         elif suffix == ".pdf":
             chunks = chunk_pdf(text)
         else:
+            # TXT and DOCS both use standard recursive splitter
             chunks = chunk_text(text)
 
         embeddings = embed(chunks)

@@ -118,6 +118,33 @@ with st.sidebar:
            del st.session_state[key]
         st.rerun()
 
+    # Password Change
+    if not is_guest:
+        with st.expander("🔑 Change Password"):
+            current_password = st.text_input("Current Password", type="password", key="curr_pass")
+            new_password     = st.text_input("New Password", type="password", key="new_pass")
+            confirm_password = st.text_input("Confirm New Password", type="password", key="confirm_pass")
+
+            if st.button("🔒 Update Password"):
+                if not current_password or not new_password or not confirm_password:
+                    st.error("All fields are required.")
+                elif new_password != confirm_password:
+                    st.error("❌ New passwords do not match.")
+                elif len(new_password) < 6:
+                    st.error("❌ Password must be at least 6 characters.")
+                else:
+                    # Verify current password first
+                    from auth.db import verify_user, update_password
+                    user = verify_user(current_user["username"], current_password)
+                    if not user:
+                        st.error("❌ Current password is incorrect.")
+                    else:
+                        success = update_password(current_user["username"], new_password)
+                        if success:
+                            st.success("✅ Password updated successfully.")
+                        else:
+                            st.error("❌ Failed to update password.")
+
 
     # Guest query limit indicator
     if is_guest:
@@ -323,7 +350,7 @@ with st.sidebar:
         st.markdown("### 📄 Add New Documents")
         doc_files = st.file_uploader(
             "Upload documents to knowledge base",
-            type=["pdf", "txt", "csv"],
+            type=["pdf", "txt", "csv", "docx"],
             accept_multiple_files=True,
             key="doc_uploader"
         )
