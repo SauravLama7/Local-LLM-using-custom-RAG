@@ -17,7 +17,7 @@ def collect_answers(test_cases: list[dict], model: str) -> list[dict]:
         print(f"🔍 [{model}] Test {i+1}/{len(test_cases)}: {tc['question'][:50]}")
 
         # Get prompt and context from your RAG pipeline
-        prompt, sources, context_chunks = get_prompt(
+        prompt, sources, context_chunks, indexed_chunks = get_prompt(
             query=tc["question"],
             model=model
         )
@@ -31,6 +31,7 @@ def collect_answers(test_cases: list[dict], model: str) -> list[dict]:
             "question":     tc["question"],
             "answer":       full_response,
             "contexts":     context_chunks,
+            "indexed_chunks": indexed_chunks,
             "ground_truth": tc.get("ground_truth", "")
         })
 

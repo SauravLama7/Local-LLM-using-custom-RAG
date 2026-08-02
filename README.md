@@ -349,6 +349,19 @@ python run_eval.py
 
 Results saved to `eval/results_comparison.json`.
 
+If eval shows this traceback
+```bash
+ModuleNotFoundError: No module named 'langchain_community.chat_models.vertexai'
+```
+Replace in `D:\Local-LLM\venv\Lib\site-packages\ragas\llms\base.py`
+```bash
+from langchain_community.chat_models.vertexai import ChatVertexAI
+```
+with 
+```bash
+from langchain_google_vertexai import ChatVertexAI
+```
+
 ### Metrics explained
 
 | Metric | What it measures |
