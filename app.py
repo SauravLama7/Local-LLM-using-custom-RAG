@@ -393,30 +393,45 @@ with st.sidebar:
                     st.info(f"⏭️ Already exists: {', '.join(skipped)}")
 
     st.markdown("### 🗂️ Knowledge Base")
-    with st.expander("📚 View Documents", expanded = False):
+    with st.expander("📚 View Documents", expanded=False):
         raw_path = Path("data/raw")
         if raw_path.exists():
             files = list(raw_path.glob("*"))
             if files:
                 for f in files:
-                    col1, col2 = st.columns([3, 1])
+                    # If user is admin, show action column; otherwise, full width for filename
+                    if current_user["role"] == "admin":
+                        col1, col2 = st.columns([3, 1])
+                    else:
+                        col1 = st.container()
+
                     col1.caption(f"📄 {f.name}")
-                    if not is_guest:
+
+                    # Delete feature — restricted strictly to admin
+                    if current_user["role"] == "admin":
                         if col2.button("🗑️", key=f"del_{f.name}"):
+                            # Double-check execution permission
+                            if current_user["role"] != "admin":
+                                st.error("❌ Unauthorized: Only administrators can delete documents.")
+                                st.stop()
+
                             # Delete from disk
                             f.unlink()
-                            # Delete from chromaDB
+
+                            # Delete from ChromaDB
                             from rag.vectordb import delete_by_source
                             delete_by_source(f.name)
-                            # Rebuild BM25
+
+                            # Rebuild BM25 index
                             from rag.bm25_store import rebuild_bm25_without
                             rebuild_bm25_without(f.name)
-                            # Remove from hash store so re-adding works
+
+                            # Remove from hash store
                             from rag.hash_store import load_hashes, save_hashes
                             hashes = load_hashes()
-                            # Remove by filepath
                             updated = {k: v for k, v in hashes.items() if f.name not in k}
                             save_hashes(updated)
+
                             st.toast(f"Deleted {f.name}")
                             st.rerun()
             else:
