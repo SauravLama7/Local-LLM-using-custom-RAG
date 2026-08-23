@@ -345,8 +345,8 @@ with st.sidebar:
             uploaded_image = uploaded_file.read()
             st.image(uploaded_image, caption="Image ready to send", use_container_width=True)
 
-    # Add Document Feature — hidden for guests
-    if not is_guest:
+    # Add Document Feature — hidden except for admins
+    if current_user["role"] == "admin":
         st.markdown("### 📄 Add New Documents")
         doc_files = st.file_uploader(
             "Upload documents to knowledge base",
@@ -357,6 +357,11 @@ with st.sidebar:
 
         if doc_files:
             if st.button("⚡ Ingest Documents"):
+                # Double-check execution permission
+                if current_user["role"] != "admin":
+                    st.error("❌ Unauthorized: Only administrators can execute ingestion.")
+                    st.stop()
+
                 import shutil
                 from scripts.ingest import ingest
 

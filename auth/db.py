@@ -70,6 +70,7 @@ def init_db():
     c.execute("SELECT COUNT(*) FROM role_permissions")
     if c.fetchone()[0] == 0:
         default_permissions = [
+            ("guest", "General"),
             ("hr",      "HR"),
             ("hr",      "Employee"),
             ("hr",      "Policy"),
@@ -107,15 +108,22 @@ def verify_user(username: str, password: str) -> dict | None:
 
 def get_allowed_docs(role: str, available_files: list[str]) -> list[str]:
     """Filter documents based on role permissions from DB."""
+
+     # Admin see all the documents
+    if role == "admin":
+        return available_files
+    
     conn = get_connection()
     c    = conn.cursor()
+
     c.execute("SELECT keyword FROM role_permissions WHERE role=?", (role,))
+
     keywords = [row[0] for row in c.fetchall()]
     conn.close()
 
-    # Admin and guest see all docs
+    # No permissions = No doucments
     if not keywords:
-        return available_files
+        return []
 
     # Filter by keyword match in filename
     return [
